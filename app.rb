@@ -41,25 +41,13 @@ post '/api/shipments' do
     shipment.billed_address_id = billing_address.id
     shipment.save
 
-    if json_data['options']['single_item_per_parcel']
-        items_data.each do |item_data|
-            parcel = Parcel.new()
-            parcel.shipment_id = shipment.id
-            parcel.save
-            item = Item.new(item_data)
-            item.parcel_id = parcel.id
-            item.save
-        end
-    else
-        parcel = Parcel.new()
-        parcel.shipment_id = shipment.id
-        parcel.save
-    
-        items_data.each do |item_data|
-            item = Item.new(item_data)
-            item.parcel_id = parcel.id
-            item.save
-        end
+    parcel = Parcel.new(shipment_id: shipment.id)
+    parcel.save
+
+    items_data.each do |item_data|
+        item = Item.new(item_data)
+        item.shipment_id = shipment.id
+        item.save
     end
 
     { shipment: shipment.inspect}.to_json

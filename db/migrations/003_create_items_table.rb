@@ -3,6 +3,7 @@ Sequel.migration do
         create_table(:items) do
             primary_key :id
             foreign_key :parcel_id, :parcels, on_delete: :cascade
+            foreign_key :shipment_id, :shipments, on_delete: :cascade
             Float :weight
             String :weight_unit
             String :description
