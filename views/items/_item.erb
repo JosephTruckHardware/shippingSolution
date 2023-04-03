@@ -3,6 +3,18 @@
   <p>Description: <%=item[:description] %></p>
   <p>Quantity: <%=item[:quantity] %></p>
   <p>SKU: <%=item[:sku] %></p>
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-item-modal">Edit</button>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-item-modal-<%= item.id %>" data-item-id="<%= item.id %>">Edit</button>
   <%= erb :'items/_edit', locals: { item: item } %>
 </div>
+
+<script>
+$(document).on('click', '[data-bs-toggle="modal"][data-bs-target="#edit-item-modal"]', function() {
+  var itemId = $(this).data('item-id');
+  $.ajax({
+    url: '/items/' + itemId + '/edit_modal',
+    success: function(html) {
+      $('#edit-item-modal').html(html).modal('show');
+    }
+  });
+});
+</script>

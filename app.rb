@@ -71,7 +71,7 @@ get '/items/:id' do
 end
 
 
-get '/items/:id/edit' do
+get '/items/:id/edit_modal' do
     @item = Item.find(params[:id])
     erb :'items/_edit', layout: false
 end
@@ -91,7 +91,7 @@ put '/items/:id' do
       order_id: params[:order_id],
       single_item_per_parcel: params[:single_item_per_parcel] == 'on'
     )
-    redirect '/shipments'
+    # redirect '/shipments'
     # redirect "/items/#{params[:id]}"
 end
 

@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-item-modal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+<div class="modal fade" id="edit-item-modal-<%= item.id %>" tabindex="-1" role="dialog" aria-labelledby="edit-item-modal-label" aria-hidden="true">  
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -52,7 +52,7 @@
             <input type="checkbox" class="form-check-input" id="single_item_per_parcel" name="single_item_per_parcel" <%= item.single_item_per_parcel ? 'checked' : '' %>>
             <label class="form-check-label" for="single_item_per_parcel">Single Item Per Parcel</label>
             </div>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button data-bs-target="#edit-item-modal-<%= item.id %>" type="submit" class="btn btn-primary">Save changes</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </form>
             </div>
