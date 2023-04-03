@@ -52,6 +52,21 @@ class Shipment < Sequel::Model
 		return value
 	end
 
+	def get_shipping_to()
+		address = Address[self.shipping_from_address_id]
+		return address
+	end
+
+	def get_shipping_from()
+		address = Address[self.shipping_from_address_id]
+		return address
+	end
+
+	def get_billed_to()
+		address = Address[self.shipping_from_address_id]
+		return address
+	end
+
 	# Make it so it recalculates weight when saved
 	# def before_save
 	# 	if self.
