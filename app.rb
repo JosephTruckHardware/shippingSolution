@@ -72,13 +72,13 @@ end
 
 
 get '/items/:id/edit_modal' do
-    @item = Item.find(params[:id])
-    erb :'items/_edit', layout: false
-end
+    @item = Item[params[:id]]
+    erb :'items/_edit', locals: { item: @item }, layout: false
+  end
 
 put '/items/:id' do
-    item = Item[params[:id]]
-    item.update(
+    @item = Item[params[:id]]
+    @item.update(
       weight: params[:weight],
       weight_unit: params[:weight_unit],
       description: params[:description],
@@ -89,11 +89,12 @@ put '/items/:id' do
       value_currency: params[:value_currency],
       origin_country: params[:origin_country],
       order_id: params[:order_id],
-      single_item_per_parcel: params[:single_item_per_parcel] == 'on'
+      single_item_per_parcel: params[:single_item_per_parcel] == "on"
     )
-    # redirect '/shipments'
-    # redirect "/items/#{params[:id]}"
-end
+    parcel = Parcel[@item.parcel_id]
+    shipment = Shipment[parcel.shipment_id]
+    redirect to('/shipments/' + shipment.id.to_s)
+  end
 
 get '/shipments' do
     @shipments = Shipment.all
