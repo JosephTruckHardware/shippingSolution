@@ -1,0 +1,55 @@
+<div class="modal fade" id="edit-address-modal-<%=address.id %>" tabindex="-1" role="dialog" aria-labelledby="editaddress-modal-label" aria-hidden="true">  
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/addresses/<%= address.id %>" method="POST">
+          <div class="form-group">
+            <label for="address_type">Address Type</label>
+            <input type="text" class="form-control" id="address_type" name="address_type" value="<%= address.address_type %>">
+          </div>
+          <div class="form-group">
+            <label for="address_line_1">Address Line 1</label>
+            <input type="text" class="form-control" id="address_line_1" name="address_line_1" value="<%= address.address_line_1 %>">
+          </div>
+          <div class="form-group">
+            <label for="address_line_2">Address Line 2</label>
+            <input type="text" class="form-control" id="address_line_2" name="address_line_2" value="<%= address.address_line_2 %>">
+          </div>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="<%= address.name %>">
+          </div>
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="<%= address.city %>">
+          </div>
+          <div class="form-group">
+            <label for="state_code">State</label>
+            <input type="text" class="form-control" id="state_code" name="state_code" value="<%= address.state_code %>">
+          </div>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="<%= address.country %>">
+          </div>
+          <div class="form-group">
+            <label for="postal_code">Postal Code</label>
+            <input type="text" class="form-control" id="postal_code" name="postal_code" value="<%= address.postal_code %>">
+          </div>
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="<%= address.phone_number %>">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="<%= address.email %>">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -53,7 +53,7 @@ class Shipment < Sequel::Model
 	end
 
 	def get_shipping_to()
-		address = Address[self.shipping_from_address_id]
+		address = Address[self.shipping_to_address_id]
 		return address
 	end
 
@@ -63,7 +63,7 @@ class Shipment < Sequel::Model
 	end
 
 	def get_billed_to()
-		address = Address[self.shipping_from_address_id]
+		address = Address[self.billed_address_id]
 		return address
 	end
 

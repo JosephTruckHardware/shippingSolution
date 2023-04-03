@@ -94,7 +94,29 @@ put '/items/:id' do
     parcel = Parcel[@item.parcel_id]
     shipment = Shipment[parcel.shipment_id]
     redirect to('/shipments/' + shipment.id.to_s)
-  end
+end
+
+get '/addresses/:id/edit' do
+    @address = Address.where(id: params[:id]).first
+    erb :'addresses/_edit'
+end
+
+post '/addresses/:id' do
+    address = Address.where(id: params[:id]).first
+    address.update(
+      address_type: params[:address_type],
+      address_line_1: params[:address_line_1],
+      address_line_2: params[:address_line_2],
+      name: params[:name],
+      city: params[:city],
+      state_code: params[:state_code],
+      country: params[:country],
+      postal_code: params[:postal_code],
+      phone_number: params[:phone_number],
+      email: params[:email]
+    )
+    redirect back
+end
 
 get '/shipments' do
     @shipments = Shipment.all
