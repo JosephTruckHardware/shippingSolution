@@ -1,0 +1,35 @@
+<div class="modal fade" id="new-parcel-modal" tabindex="-1" aria-labelledby="new-parcel-modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="new-parcel-modal-label">Add New Parcel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/shipments/<%=@shipment.id%>/parcels" method="post">
+        <div class="mb-3">
+            <label for="package_type" class="form-label">Package Type</label>
+            <input type="text" class="form-control" id="package_type" name="package_type" required>
+          </div>
+          <div class="mb-3">
+            <label for="parcel-length" class="form-label">Length</label>
+            <input type="number" class="form-control" id="parcel-length" name="length" required>
+          </div>
+          <div class="mb-3">
+            <label for="parcel-width" class="form-label">Width</label>
+            <input type="number" class="form-control" id="parcel-width" name="width" required>
+          </div>
+          <div class="mb-3">
+            <label for="parcel-height" class="form-label">Height</label>
+            <input type="number" class="form-control" id="parcel-height" name="height" required>
+          </div>
+          <div class="mb-3">
+            <label for="dimension_unit" class="form-label">Dimension Unit</label>
+            <input type="text" class="form-control" id="dimension_unit" name="dimension_unit" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Parcel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

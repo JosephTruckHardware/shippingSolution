@@ -19,8 +19,14 @@
 <hr>
 
 <% @parcels.each do |parcel| %>
-    <%= erb :'parcels/_parcel', locals: { parcel: parcel } %>
+    <%= erb :'parcels/_view', locals: { parcel: parcel } %>
 <% end %>
+
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-parcel-modal">Add New Parcel</button>
+
+<%= erb :'parcels/_new' %>
+
+<hr>
 
 <button id="get-rates-btn">Get Rates</button>
 <div id="rates-container"></div>
@@ -34,4 +40,25 @@
         document.getElementById('rates-container').innerHTML = html;
         });
     });
+</script>
+
+<script>
+  // Function to load new parcel form into modal via AJAX
+  function loadNewParcelForm() {
+    fetch('/shipments/<%= @shipment.id %>/new_parcel')
+      .then(response => response.text())
+      .then(html => {
+        document.querySelector('#new-parcel-form').innerHTML = html;
+      });
+  }
+
+  // Show new parcel modal when button is clicked
+  document.querySelector('[data-bs-target="#new-parcel-modal"]').addEventListener('click', () => {
+    loadNewParcelForm();
+  });
+
+  // Clear new parcel form when modal is hidden
+  $('#new-parcel-modal').on('hidden.bs.modal', () => {
+    document.querySelector('#new-parcel-form').innerHTML = '';
+  });
 </script>

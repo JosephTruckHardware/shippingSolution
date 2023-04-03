@@ -8,6 +8,7 @@ Sequel.migration do
             String :weight_unit
             Float :length
             Float :width
+            Float :height
             String :dimension_unit
             String :tracking_number
         end

@@ -41,9 +41,6 @@ post '/api/shipments' do
     shipment.billed_address_id = billing_address.id
     shipment.save
 
-    parcel = Parcel.new(shipment_id: shipment.id)
-    parcel.save
-
     items_data.each do |item_data|
         item = Item.new(item_data)
         item.shipment_id = shipment.id
@@ -57,7 +54,6 @@ get '/items/:id' do
     @item = Item[params[:id]]
     erb :'items/_item', layout: false
 end
-
 
 get '/items/:id/edit_modal' do
     @item = Item[params[:id]]
@@ -83,6 +79,59 @@ put '/items/:id' do
     shipment = Shipment[parcel.shipment_id]
     redirect to('/shipments/' + shipment.id.to_s)
 end
+
+delete '/shipments/:shipment_id/delete_parcel/:id' do
+    parcel = Parcel[params[:id]]
+
+    items = parcel.get_items()
+
+    if items
+        items.each do |item|
+            item.set(parcel_id: nil)
+            item.save
+        end
+    end
+
+    parcel.delete
+
+    redirect '/shipments/' + parcel.shipment_id.to_s
+end
+
+get '/shipments/:id/new_parcel' do
+    @shipment = Shipment[params[:id]]
+    erb :'parcels/_new', locals: { shipment: @shipment }, layout: false
+  end
+  
+
+post '/shipments/:shipment_id/parcels' do
+    @shipment = Shipment[params[:shipment_id]]
+    parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
+    parcel.set(shipment_id: @shipment.id)
+    if parcel.valid?
+        parcel.save
+        redirect "/shipments/#{params[:shipment_id]}"
+    else
+        # If there are validation errors, render the form again with error messages
+          erb :'parcels/_new', layout: false
+    end
+end
+
+# get '/parcel/:id/edit' do
+#     @parcel = Parcel[params[:id]]
+#     erb :'get_parcels/_edit', locals: { parcel: @parcel }, layout: false
+# end
+
+# put '/parcel/:id' do
+#     @parcel = Parcel[params[:id]]
+#     @parcel.update(
+#       package_type: params[:package_type],
+#       length: params[:length],
+#       width: params[:width],
+#       dimension_unit: params[:dimension_unit]
+#     )
+#     shipment = Shipment[parcel.shipment_id]
+#     redirect to('/shipments/' + shipment.id.to_s)
+# end
 
 get '/addresses/:id/edit' do
     @address = Address.where(id: params[:id]).first
