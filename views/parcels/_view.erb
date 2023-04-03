@@ -7,12 +7,15 @@
     <% parcel.get_items.each do |item| %>
         <%= erb :'items/_item', locals: { item: item} %>
     <% end %>
-</ul>
+    <!-- Button to open add item modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">Add Item</button>
+    <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
 
-<!-- Delete parcel button -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteParcelModal">
+    <!-- Delete parcel button -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteParcelModal">
     Delete Parcel
-</button>
+    </button>
+</ul>
 
 <!-- Delete parcel confirmation modal -->
 <div class="modal fade" id="deleteParcelModal" tabindex="-1" aria-labelledby="deleteParcelModalLabel" aria-hidden="true">
@@ -35,3 +38,18 @@
         </div>
     </div>
 </div>
+
+<script>
+  $(document).on("click", ".btn-primary", function () {
+    var parcelId = $(this).data('parcel-id');
+    $.ajax({
+      url: '/shipments/' + {<%=parcel.shipment_id%>} + '/parcel/' + parcelId + '/add_items',
+      type: 'GET',
+      dataType: 'html',
+      success: function(data) {
+        // $('#edit-address-modal-' + itemId).html(data);
+        $('#add-item-modal').modal('show');
+      }
+    });
+  });
+</script>
