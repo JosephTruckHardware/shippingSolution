@@ -27,7 +27,7 @@
 
 <script>
     document.getElementById('get-rates-btn').addEventListener('click', function() {
-    fetch('/shipments/11/get_rates')
+    fetch('/shipments/<%=@shipment.id%>/get_rates')
         .then(response => response.text())
         .then(html => {
         document.getElementById('get-rates-btn').style.display = 'none';
