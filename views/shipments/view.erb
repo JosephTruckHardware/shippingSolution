@@ -1,0 +1,37 @@
+<h1>Shipment Details</h1>
+
+<p><strong>Order ID:</strong> <%= @shipment.order_id %></p>
+<% if @shipment.order_date %><p><strong>Order Date:</strong> <%= @shipment.order_date.strftime('%B %d, %Y') %></p><% end %>
+<p><strong>Status:</strong> <%= @shipment.status %></p>
+<p><strong>Shipping To Address:</strong> <%= @shipment.shipping_to_address_id %></p>
+<p><strong>Shipping From Address:</strong> <%= @shipment.shipping_from_address_id %></p>
+<p><strong>Billed Address:</strong> <%= @shipment.billed_address_id %></p>
+<p><strong>Required Date:</strong> <%= @shipment.required_date.strftime('%B %d, %Y') %></p>
+<p><strong>Tracking Number:</strong> <%= @shipment.tracking_number %></p>
+<p><strong>Carrier Name:</strong> <%= @shipment.carrier_name %></p>
+<p><strong>Service Name:</strong> <%= @shipment.service_name %></p>
+<!--<p><strong>Rate Response:</strong> <%= @shipment.rate_response %></p>-->
+<% if @shipment.shipped_at %><p><strong>Shipped At:</strong> <%= @shipment.shipped_at.strftime('%B %d, %Y') %></p><% end %>
+<p><strong>Paid By:</strong> <%= @shipment.paid_by %></p>
+<p><strong>Metadata:</strong> <%= @shipment.metadata %></p>
+<p><strong>Updated By:</strong> <%= @shipment.updated_by %></p>
+
+<hr>
+
+<% @parcels.each do |parcel| %>
+    <%= erb :'parcels/_parcel', locals: { parcel: parcel } %>
+<% end %>
+
+<button id="get-rates-btn">Get Rates</button>
+<div id="rates-container"></div>
+
+<script>
+    document.getElementById('get-rates-btn').addEventListener('click', function() {
+    fetch('/shipments/11/get_rates')
+        .then(response => response.text())
+        .then(html => {
+        document.getElementById('get-rates-btn').style.display = 'none';
+        document.getElementById('rates-container').innerHTML = html;
+        });
+    });
+</script>

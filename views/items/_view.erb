@@ -1,0 +1,19 @@
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemModalLabel"><%= @item.description %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Weight: <%= @item.weight %> <%= @item.weight_unit %></p>
+        <p>Quantity: <%= @item.quantity %></p>
+        <p>SKU: <%= @item.sku %></p>
+        <p>HS Code: <%= @item.hs_code %></p>
+        <p>Value: <%= @item.value_amount %> <%= @item.value_currency %></p>
+        <p>Origin Country: <%= @item.origin_country %></p>
+        <p>Order ID: <%= @item.order_id %></p>
+      </div>
+    </div>
+  </div>
+</div>

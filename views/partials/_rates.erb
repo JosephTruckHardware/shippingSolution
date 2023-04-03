@@ -1,0 +1,13 @@
+<ul>
+  <% @rates.each do |rate| %>
+    <li>
+      <strong><%= rate["serviceName"] %></strong>:
+      <ul>
+        <li>Base Price: $<%= rate["ratedShipmentDetails"][0]["totalBaseCharge"] %></li>
+        <li>Surcharge: $<%= rate["ratedShipmentDetails"][0]["shipmentRateDetail"]["totalSurcharges"] %></li>
+        <li>Total Price: $<%= rate["ratedShipmentDetails"][0]["totalNetCharge"] %></li>
+      </ul>
+    </li>
+    <br>
+  <% end %>
+</ul>

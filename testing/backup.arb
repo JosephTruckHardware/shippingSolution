@@ -1,0 +1,50 @@
+require './Fedex.rb'
+require './models.rb'
+require 'sinatra'
+require 'sinatra/reloader' if development?
+require 'sinatra/flash'
+require 'erb'
+
+get '/' do
+    @title = "Home"
+    erb :index
+end
+
+post '/api/shipments' do
+    request.body.rewind
+    json_data = JSON.parse(request.body.read)
+
+    shipment_data = json_data['shipment']
+    shipped_to_data = json_data['shipped_to']
+    billed_to_data = json_data['billed_to']
+    recipient_data = json_data['recipient']
+    parcel_data = json_data['parcel']
+    items_data = json_data['items']
+
+    shipped_to_address = Address.new(shipped_to_data)
+    shipped_to_address.save
+
+    billed_to_address = Address.new(billed_to_data)
+    billed_to_address.save
+
+    recipient_address = Address.new(recipient_data)
+    recipient_address.save
+
+    shipment = Shipment.new(shipment_data)
+    shipment.sender_address_id = shipped_to_address.id
+    shipment.recipient_address_id = recipient_address.id
+    shipment.billed_address_id = billed_to_address.id
+    shipment.save
+
+    parcel = Parcel.new(parcel_data)
+    parcel.shipment_id = shipment.id
+    parcel.save
+
+    items_data.each do |item_data|
+        item = Item.new(item_data)
+        item.parcel_id = parcel.id
+        item.save
+    end
+
+    { shipment: shipment, parcel: parcel }.to_json
+end

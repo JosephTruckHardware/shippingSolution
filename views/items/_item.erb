@@ -1,0 +1,117 @@
+<div class=item">
+  <p>Weight: <%=item[:weight] %> <%=item[:weight_unit] %></p>
+  <p>Description: <%=item[:description] %></p>
+  <p>Quantity: <%=item[:quantity] %></p>
+  <p>SKU: <%=item[:sku] %></p>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit</button>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemModal">View</button>
+</div>
+
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemModalLabel"><%= item.description %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Weight: <%= item.weight %> <%= item.weight_unit %></p>
+        <p>Quantity: <%= item.quantity %></p>
+        <p>SKU: <%= item.sku %></p>
+        <p>HS Code: <%= item.hs_code %></p>
+        <p>Value: <%= item.value_amount %> <%= item.value_currency %></p>
+        <p>Origin Country: <%= item.origin_country %></p>
+        <p>Order ID: <%= item.order_id %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/items/<%=item.id %>" method="post">
+          <input type="hidden" name="_method" value="put">
+          <div class="mb-3">
+            <label for="weight" class="form-label">Weight</label>
+            <input type="number" step="0.01" class="form-control" id="weight" name="weight" value="<%=item.weight %>">
+          </div>
+          <div class="mb-3">
+            <label for="weight_unit" class="form-label">Weight Unit</label>
+            <input type="text" class="form-control" id="weight_unit" name="weight_unit" value="<%=item.weight_unit %>">
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description"><%=item.description %></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" value="<%=item.quantity %>">
+          </div>
+          <div class="mb-3">
+            <label for="sku" class="form-label">SKU</label>
+            <input type="text" class="form-control" id="sku" name="sku" value="<%=item.sku %>">
+          </div>
+          <div class="mb-3">
+            <label for="hs_code" class="form-label">HS Code</label>
+            <input type="text" class="form-control" id="hs_code" name="hs_code" value="<%=item.hs_code %>">
+          </div>
+          <div class="mb-3">
+            <label for="value_amount" class="form-label">Value Amount</label>
+            <input type="number" step="0.01" class="form-control" id="value_amount" name="value_amount" value="<%=item.value_amount %>">
+          </div>
+          <div class="mb-3">
+            <label for="value_currency" class="form-label">Value Currency</label>
+            <input type="text" class="form-control" id="value_currency" name="value_currency" value="<%=item.value_currency %>">
+        </div>
+            <div class="mb-3">
+            <label for="origin_country" class="form-label">Origin Country</label>
+            <input type="text" class="form-control" id="origin_country" name="origin_country" value="<%=item.origin_country %>">
+            </div>
+            <div class="mb-3">
+            <label for="order_id" class="form-label">Order ID</label>
+            <input type="text" class="form-control" id="order_id" name="order_id" value="<%=item.order_id %>">
+            </div>
+            <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="single_item_per_parcel" name="single_item_per_parcel" <%=item.single_item_per_parcel ? 'checked' : '' %>>
+            <label class="form-check-label" for="single_item_per_parcel">Single Item Per Parcel</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Get the modal
+var editItemModal = document.getElementById("editItemModal");
+
+// Get the button that opens the modal
+var editItemButton = document.getElementById("editItemButton");
+
+// When the user clicks on the button, open the modal
+editItemButton.onclick = function() {
+  editItemModal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+var closeModalButton = document.getElementsByClassName("close")[0];
+closeModalButton.onclick = function() {
+  editItemModal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == editItemModal) {
+    editItemModal.style.display = "none";
+  }
+}
+</script>
