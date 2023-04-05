@@ -52,20 +52,20 @@ class Shipment < Sequel::Model
 	# 	return value
 	# end
 
-	# def get_shipping_to()
-	# 	address = Address[self.shipping_to_address_id]
-	# 	return address
-	# end
+	def get_shipping_to()
+		address = Address[self.shipping_to_address_id]
+		return address
+	end
 
-	# def get_shipping_from()
-	# 	address = Address[self.shipping_from_address_id]
-	# 	return address
-	# end
+	def get_shipping_from()
+		address = Address[self.shipping_from_address_id]
+		return address
+	end
 
-	# def get_billed_to()
-	# 	address = Address[self.billed_address_id]
-	# 	return address
-	# end
+	def get_billed_to()
+		address = Address[self.billed_address_id]
+		return address
+	end
 
 	# def get_unassigned_items()
 	# 	assigned_items = ParcelItem.where(parcel_id: Parcel.where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
@@ -81,12 +81,13 @@ class Shipment < Sequel::Model
 end
 
 class ParcelItem < Sequel::Model(:parcels_items)
-	many_to_one :item
+	many_to_one :item 
 	many_to_one :parcel
 end
 
 class Parcel < Sequel::Model
-	many_to_many :items, through: :parcels_items
+	many_to_many :items, through: :parcels_items 
+	# :select=>[Sequel[:items].*, Sequel[:parcels_items][:quantity]]
 
 
 	# many_to_many :items, :select => [items.*, :parcel_items__qty]
@@ -121,6 +122,8 @@ end
 
 class Item < Sequel::Model
 	many_to_many :parcels, through: :parcels_items
+
+
 	# one_to_many :parcel_items
 	# many_to_many :parcels, left_key: :item_id, right_key: :parcel_id, join_table: :parcel_items
 

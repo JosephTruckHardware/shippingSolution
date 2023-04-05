@@ -174,7 +174,8 @@ end
 
 get '/shipments/:id' do
     @shipment = Shipment[params[:id]]
-    @parcels  = Parcel.where(shipment_id: @shipment.id).all
+    @parcels_items = ParcelItem.where(shipment_id: @shipment.id).all
+    # @parcels  = Parcel.where(shipment_id: @shipment.id).all
     erb :'shipments/view'
 end
 
@@ -262,5 +263,5 @@ get '/shipments/:id/get_rates' do
 end
 
 get 'shipments/:id/purchase_label' do
-
+    
 end
