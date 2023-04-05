@@ -6,7 +6,7 @@ DB = Sequel.sqlite('db/db.sqlite')
 # DB.extension :pagination
 
 class Shipment < Sequel::Model
-    many_to_one :parcel
+    many_to_one :parcel_items
 	one_to_many :records
 	one_to_many :addresses
 
@@ -67,22 +67,24 @@ class Shipment < Sequel::Model
 		return address
 	end
 
-	# Make it so it recalculates weight when saved
-	# def before_save
-	# 	if self.
-
-	# 	expires_at = DateTime.now + 0.0415
-	# 	self.token_expires_at = expires_at
-	# 	super
-	# end
+	def get_unassigned_items()
+		assigned_items = ParcelItem.where(parcel_id: Parcel.where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
+		unassigned_items = []
+		items = Item.where(shipment_id: self.id).select(:id, :quantity)
+		items.each do |item|
+			assigned_quantity = assigned_items[item.id] || 0
+			unassigned_quantity = item.quantity - assigned_quantity
+			unassigned_items.push(unassigned_quantity) if unassigned_quantity > 0
+		end
+		return unassigned_items
+	end
 end
 
 class Parcel < Sequel::Model
-    many_to_one :shipment
-	one_to_many :items
-	
+	one_to_many :parcel_items
+		
 	def get_items()
-		items = Item.where(parcel_id: self.id).all
+		items = Item.join(:parcel_items, parcel_id: self.id).all
 		return items
 	end
 
@@ -90,7 +92,7 @@ class Parcel < Sequel::Model
 		weight = 0.00
 		items = get_items()
 		items.each do |item|
-			weight += item.weight
+			weight += item[:weight] * item[:quantity]
 		end
 		self.weight = weight
 	end
@@ -99,7 +101,7 @@ class Parcel < Sequel::Model
 		item_count = 0
 		items = get_items()
 		items.each do |item|
-			item_count += item.quantity
+			item_count += item[:quantity]
 		end
 		return item_count
 	end
@@ -108,21 +110,20 @@ class Parcel < Sequel::Model
 		value = 0.00
 		items = get_items()
 		items.each do |item|
-			value += item.value_amount
+			value += item[:value_amount] * item[:quantity]
 		end
 		return value
 	end
-
-	# plugin :validation_helpers
-	# def validate
-	# 	super
-	# 	validates_presence :package_type
-	# 	validates_min_value 0.01, :weight, message: 'must be greater than 0'
-	# end
 end
 
 class Item < Sequel::Model
-	many_to_one :parcels
+	one_to_many :parcel_items
+	many_to_many :parcels, left_key: :item_id, right_key: :parcel_id, join_table: :parcel_items
+
+	def get_parcels()
+		parcels = Parcel.join(:parcel_items, item_id: self.id).all
+		return parcels
+	end
 end
 
 class Address < Sequel::Model
@@ -135,4 +136,9 @@ class Token < Sequel::Model
 		self.token_expires_at = expires_at
 		super
 	end
+end
+
+class ParcelItem < Sequel::Model(:parcel_items)
+	many_to_one :item
+	one_to_one :parcel
 end
