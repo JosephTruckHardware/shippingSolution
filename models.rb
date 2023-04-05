@@ -140,5 +140,5 @@ end
 
 class ParcelItem < Sequel::Model(:parcel_items)
 	many_to_one :item
-	one_to_one :parcel
+	many_to_one :parcel
 end
