@@ -5,6 +5,7 @@
   <p>SKU: <%=item[:sku] %></p>
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-item-modal-<%= item.id %>" data-item-id="<%= item.id %>">Edit</button>
   <%= erb :'items/_edit', locals: { item: item } %>
+  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#remove-item-modal">Remove Item</button>
 </div>
 
 <script>

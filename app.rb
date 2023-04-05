@@ -109,7 +109,11 @@ post '/shipments/:shipment_id/parcel/:id/add_item' do
     selected_item.save
     redirect 'shipments/' + parcel.shipment_id.to_s
 end
-  
+
+post '/shipments/:shipment_id/parcel/:parcel_id/remove_item/:id' do
+
+end
+
 post '/shipments/:shipment_id/parcels' do
     @shipment = Shipment[params[:shipment_id]]
     parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
@@ -184,6 +188,9 @@ end
 
 put '/shipments/:id' do
     shipment = Shipment[params[:id]]
+
+    shipment.update(params[:shipment])
+
     shipment.order_id = params[:order_id]
     shipment.order_date = params[:order_date]
     shipment.status = params[:status]
