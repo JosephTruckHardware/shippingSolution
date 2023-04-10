@@ -4,7 +4,7 @@
     <li>Weight: <%= parcel.weight %> <%= parcel.weight_unit %></li>
     <li>Dimensions: <%= parcel.length %> x <%= parcel.width %> x <%= parcel.height %> <%= parcel.dimension_unit %></li>
     <h4>Items: </h4>
-    <% parcel.get_items.each do |item| %>
+    <% parcel.get_items_detailed.each do |item| %>
         <%= erb :'items/_item', locals: { item: item} %>
     <% end %>
     <!-- Button to open add item modal -->
@@ -30,7 +30,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="/shipments/<%=parcel.shipment_id%>/delete_parcel/<%= parcel.id %>" method="post">
+                <form action="/shipments/<%=parcel.shipment_id%>/parcels/<%= parcel.id %>" method="post">
                     <input type="hidden" name="_method" value="delete">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>

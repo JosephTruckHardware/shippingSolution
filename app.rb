@@ -80,17 +80,19 @@ put '/items/:id' do
     redirect to('/shipments/' + shipment.id.to_s)
 end
 
-delete '/shipments/:shipment_id/delete_parcel/:id' do
+delete '/shipments/:shipment_id/parcels/:id' do
     parcel = Parcel[params[:id]]
 
     items = parcel.get_items()
 
+    puts items
+
     if items
         items.each do |item|
-            item.set(parcel_id: nil)
-            item.save
+            item_obj = Item[item[:item_id]]
+            parcel.remove_item(item_obj, item[:quantity])
         end
-    end
+    end 
 
     parcel.delete
 
@@ -102,11 +104,11 @@ get '/shipments/:id/new_parcel' do
     erb :'parcels/_new', locals: { shipment: @shipment }, layout: false
 end
 
-post '/shipments/:shipment_id/parcel/:id/add_item' do
+post '/shipments/:shipment_id/parcel/:id' do
     parcel = Parcel[params[:id]]
     selected_item = Item[params[:selected_item]]
-    selected_item.set(parcel_id: parcel.id)
-    selected_item.save
+    parcel.add_item(selected_item, params[:item_amount].to_i)
+    parcel.save
     redirect 'shipments/' + parcel.shipment_id.to_s
 end
 

@@ -84,10 +84,23 @@ class Parcel < Sequel::Model(:parcels)
 		items = DB[:parcels_items].where(parcel_id: self.id).select(:item_id, :quantity).all
 		return items
 	end
+
+	def get_items_detailed()
+		items = DB[:parcels_items].where(parcel_id: self.id).select(:item_id, :quantity).all
+		items.each do |item|
+			item[:item] = Item[item[:item_id]]
+		end
+		return items
+	end
 end
 
 class Item < Sequel::Model
 	many_to_many :parcels, join_table: :parcels_items, left_key: :item_id, right_key: :parcel_id
+
+	def get_details()
+		details = DB[:items_details].where(item_id: self.id).all
+		return details
+	end
 end
 
 class Address < Sequel::Model
