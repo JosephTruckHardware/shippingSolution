@@ -25,29 +25,16 @@ class Shipment < Sequel::Model
 	end
 
 	def get_unassigned_items()
-		assigned_items = DB[:parcels_items].where(parcel_id: DB[:parcels].where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
+		assigned_items = DB[:parcels_items].where(parcel_id: DB[:parcels].where(shipment_id: self.id).select(:id))
 		unassigned_items = []
 		items = Item.where(shipment_id: self.id).select(:id, :quantity)
 		items.each do |item|
-		  assigned_quantity = assigned_items[item.id] || 0
-		  unassigned_quantity = item.quantity - assigned_quantity
-		  unassigned_items.push({item: item, quantity: unassigned_quantity}) if unassigned_quantity > 0
+			assigned_quantity = assigned_items.where(item_id: item.id).sum(:quantity) || 0
+			unassigned_quantity = item.quantity - assigned_quantity
+			unassigned_items.push({item: item, quantity: unassigned_quantity}) if unassigned_quantity > 0
 		end
 		return unassigned_items
-	  end
-	  
-	  
-	# def get_unassigned_items()
-	# 	assigned_items = ParcelItem.where(parcel_id: Parcel.where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
-	# 	unassigned_items = []
-	# 	items = Item.where(shipment_id: self.id).select(:id, :quantity)
-	# 	items.each do |item|
-	# 		assigned_quantity = assigned_items[item.id] || 0
-	# 		unassigned_quantity = item.quantity - assigned_quantity
-	# 		unassigned_items.push(unassigned_quantity) if unassigned_quantity > 0
-	# 	end
-	# 	return unassigned_items
-	# end
+	end
 end
 
 class ParcelsItem < Sequel::Model(:parcels_items)

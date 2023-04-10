@@ -116,9 +116,10 @@ end
 
 post '/shipments/:shipment_id/parcels' do
     @shipment = Shipment[params[:shipment_id]]
-    parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
-    parcelItem = ParcelItem.new()
-    parcel_item = shipment.add_parcelItem()
+    parcel = @shipment.add_parcel(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
+    # parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
+    # parcelItem = ParcelItem.new()
+    # parcel_item = shipment.add_parcelItem()
 
     # parcel.set(shipment_id: @shipment.id)
     if parcel.valid?
@@ -177,7 +178,9 @@ end
 
 get '/shipments/:id' do
     @shipment = Shipment[params[:id]]
-    @parcels_items = ParcelItem.where(shipment_id: @shipment.id).all
+    @parcels = Parcel.where(shipment_id: @shipment.id).all
+    @unassigned_items = @shipment.get_unassigned_items
+    # @parcels_items = ParcelItem.where(shipment_id: @shipment.id).all
     # @parcels  = Parcel.where(shipment_id: @shipment.id).all
     erb :'shipments/view'
 end

@@ -1,5 +1,4 @@
 <!-- Add item to package modal -->
-<% items_dataset = Item.where(shipment_id: parcel.shipment_id).where(parcel_id: nil).all %>
 
 <div class="modal fade" id="add-item-modal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -12,7 +11,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <select class="form-select" name="selected_item">
-                        <% items_dataset.each do |item| %>
+                        <% @unassigned_items.each do |item| %>
                             <option value="<%= item[:id] %>"><%= item[:description] %> - <%= item[:sku] %></option>
                         <% end %>
                         </select>
