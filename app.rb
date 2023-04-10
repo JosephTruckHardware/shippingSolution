@@ -117,7 +117,10 @@ end
 post '/shipments/:shipment_id/parcels' do
     @shipment = Shipment[params[:shipment_id]]
     parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
-    parcel.set(shipment_id: @shipment.id)
+    parcelItem = ParcelItem.new()
+    parcel_item = shipment.add_parcelItem()
+
+    # parcel.set(shipment_id: @shipment.id)
     if parcel.valid?
         parcel.save
         redirect "/shipments/#{params[:shipment_id]}"
@@ -263,5 +266,5 @@ get '/shipments/:id/get_rates' do
 end
 
 get 'shipments/:id/purchase_label' do
-    
+
 end
