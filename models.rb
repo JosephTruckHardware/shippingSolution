@@ -24,6 +24,19 @@ class Shipment < Sequel::Model
 		return address
 	end
 
+	def get_unassigned_items()
+		assigned_items = DB[:parcels_items].where(parcel_id: DB[:parcels].where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
+		unassigned_items = []
+		items = Item.where(shipment_id: self.id).select(:id, :quantity)
+		items.each do |item|
+		  assigned_quantity = assigned_items[item.id] || 0
+		  unassigned_quantity = item.quantity - assigned_quantity
+		  unassigned_items.push({item: item, quantity: unassigned_quantity}) if unassigned_quantity > 0
+		end
+		return unassigned_items
+	  end
+	  
+	  
 	# def get_unassigned_items()
 	# 	assigned_items = ParcelItem.where(parcel_id: Parcel.where(shipment_id: self.id).select(:id)).select_group(:item_id).sum(:quantity)
 	# 	unassigned_items = []
@@ -37,35 +50,46 @@ class Shipment < Sequel::Model
 	# end
 end
 
-class Parcel < Sequel::Model
+class ParcelsItem < Sequel::Model(:parcels_items)
+	many_to_one :item
+	many_to_one :parcel
+end
+
+class Parcel < Sequel::Model(:parcels)
+	one_to_many :parcels_items
 	many_to_one :shipment
-	many_to_many :items, join_table: :parcels_items, left_key: :parcel_id, right_key: :item_id
   
 	def add_item(item, quantity)
-	  # Check if the item already exists in the parcel
-	  parcel_item = DB[:parcels_items].where(item_id: item.id).first
+	  parcel_item = parcels_items_dataset.where(item_id: item.id).first
   
 	  if parcel_item
 		# If the item exists, update the quantity
 		parcel_item.update(quantity: parcel_item[:quantity] + quantity)
 	  else
 		# If the item does not exist, create a new parcel item
-		DB[:parcels_items].insert(item_id: item.id, parcel_id: self.id, quantity: quantity)
+		ParcelsItem.create(item: item, parcel: self, quantity: quantity)
 	  end
 	end
 
 	def remove_item(item, quantity)
 	  # Check if the item exists in the parcel
-	  parcel_item = DB[:parcels_items].where(item_id: item.id).first
+	  parcel_item = parcels_items_dataset.where(item_id: item.id).first
   
 	  if parcel_item
 		# If the item exists, update the quantity
-		parcel_item.update(quantity: parcel_item[:quantity] - quantity)
-  
-		# If the quantity is 0, delete the item from the parcel
-		if parcel_item[:quantity] == 0
-		  parcel_item.delete
+		new_quantity = parcel_item[:quantity] - quantity
+		if new_quantity >= 0
+		  parcel_item.update(quantity: new_quantity)
+	
+		  # If the quantity is 0, delete the item from the parcel
+		  if new_quantity == 0
+			parcel_item.delete
+		  end
+		else
+		  raise "Cannot remove more items than exist in the parcel"
 		end
+	  else
+		raise "Item not found in parcel"
 	  end
 	end
 

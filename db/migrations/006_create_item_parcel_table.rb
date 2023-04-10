@@ -2,7 +2,7 @@ Sequel.migration do
 	up do
 		create_table(:parcels_items) do
 			primary_key :id
-			Integer :quantity
+			Integer :quantity, null: false
 			foreign_key :parcel_id, :parcels
 			foreign_key :item_id, :items
         end

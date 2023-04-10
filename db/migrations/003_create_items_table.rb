@@ -6,7 +6,7 @@ Sequel.migration do
             Float :weight
             String :weight_unit
             String :description
-            Integer :quantity
+            Integer :quantity, null: false, default: 0
             String :sku
             String :hs_code
             Float :value_amount
