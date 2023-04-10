@@ -269,6 +269,8 @@ def get_shipping_rates_international(shipment_id)
 
   shipment_data[:requestedShipment][:requestedPackageLineItems] = items_hash
 
+  puts shipment_data
+
   shipment_data = JSON.generate(shipment_data)
 
   rates = Faraday.post(Rates_url) do |req|

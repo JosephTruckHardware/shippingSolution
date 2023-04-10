@@ -8,7 +8,7 @@
     <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
   <% end %>
   <!-- Button to open add item modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal-<%=parcel.id%>">
     Add Item
   </button>
   <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
@@ -52,7 +52,7 @@
       dataType: 'html',
       success: function(data) {
         // $('#edit-address-modal-' + itemId).html(data);
-        $('#add-item-modal').modal('show');
+        $('#add-item-modal-<%=parcel.id%>').modal('show');
       }
     });
   });

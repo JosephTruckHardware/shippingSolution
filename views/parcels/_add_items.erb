@@ -1,5 +1,5 @@
 <!-- Add item to package modal -->
-<div class="modal fade" id="add-item-modal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+<div class="modal fade" id="add-item-modal-<%=parcel.id%>" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -9,14 +9,13 @@
       <form action="/shipments/<%= parcel.shipment_id %>/parcel/<%=parcel.id%>" method="post">
         <div class="modal-body">
           <div class="mb-3">
-            <select class="form-select" name="selected_item" onchange="setMaxAmount(this)">
-              <% @unassigned_items.each do |item| %>
+            <select class="form-select" name="selected_item" onchange="setMaxAmount(this)" id="selected-item-<%=parcel.id%>">              <% @unassigned_items.each do |item| %>
                 <% item_w_details = Item[item[:item][:id]] %>
                 <option value="<%= item_w_details.id %>" data-max-amount="<%= item[:quantity] %>"><%= item_w_details.description %> - <%= item_w_details.sku %></option>
               <% end %>
             </select>
-            <input type="number" class="form-control" name="item_amount" id="item-amount" min="1" required>
-            <span id="max-amount"></span>
+            <input type="number" class="form-control" name="item_amount" id="item-amount-<%=parcel.id%>" min="1" required>  
+            <span id="max-amount-<%=parcel.id%>"></span>
           </div>
         </div>
         <div class="modal-footer">
@@ -29,8 +28,16 @@
 </div>
 <script>
   function setMaxAmount(select) {
-      var maxAmount = select.options[select.selectedIndex].getAttribute('data-max-amount');
-      document.getElementById('item-amount').max = maxAmount;
-      document.getElementById('max-amount').innerHTML = 'Maximum: ' + maxAmount;
-  }
+  var parcelId = select.closest('.modal').id.split('-')[3];
+  var maxAmount = select.options[select.selectedIndex].getAttribute('data-max-amount');
+  document.getElementById('item-amount-' + parcelId).max = maxAmount;
+  document.getElementById('max-amount-' + parcelId).innerHTML = 'Maximum: ' + maxAmount;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var selects = document.querySelectorAll('select[name="selected_item"]');
+  selects.forEach(function(select) {
+    setMaxAmount(select);
+  });
+});
 </script>
