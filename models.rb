@@ -80,6 +80,19 @@ class Parcel < Sequel::Model(:parcels)
 	  end
 	end
 
+	def remove_item_force(item)
+	  # Check if the item exists in the parcel
+	  parcel_item = parcels_items_dataset.where(item_id: item.id).first
+  
+	  if parcel_item
+		parcel_item.update(quantity: 0)
+		parcel_item.delete
+	  else
+		raise "Item not found in parcel"
+	  end
+	end
+	  
+		
 	def get_items()
 		items = DB[:parcels_items].where(parcel_id: self.id).select(:item_id, :quantity).all
 		return items
@@ -87,10 +100,13 @@ class Parcel < Sequel::Model(:parcels)
 
 	def get_items_detailed()
 		items = DB[:parcels_items].where(parcel_id: self.id).select(:item_id, :quantity).all
+		items_detailed = []
 		items.each do |item|
-			item[:item] = Item[item[:item_id]]
+			item_detailed = Item[item[:item_id]].get_details()
+			item_detailed[0][:quantity] = item[:quantity]
+			items_detailed.push(item_detailed[0])
 		end
-		return items
+		return items_detailed
 	end
 end
 
@@ -98,7 +114,7 @@ class Item < Sequel::Model
 	many_to_many :parcels, join_table: :parcels_items, left_key: :item_id, right_key: :parcel_id
 
 	def get_details()
-		details = DB[:items_details].where(item_id: self.id).all
+		details = DB[:items].where(id: self.id).all
 		return details
 	end
 end

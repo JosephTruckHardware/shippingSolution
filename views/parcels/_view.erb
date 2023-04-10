@@ -5,7 +5,7 @@
     <li>Dimensions: <%= parcel.length %> x <%= parcel.width %> x <%= parcel.height %> <%= parcel.dimension_unit %></li>
     <h4>Items: </h4>
     <% parcel.get_items_detailed.each do |item| %>
-        <%= erb :'items/_item', locals: { item: item} %>
+        <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
     <% end %>
     <!-- Button to open add item modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">Add Item</button>

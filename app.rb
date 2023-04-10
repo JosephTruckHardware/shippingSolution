@@ -66,7 +66,6 @@ put '/items/:id' do
       weight: params[:weight],
       weight_unit: params[:weight_unit],
       description: params[:description],
-      quantity: params[:quantity],
       sku: params[:sku],
       hs_code: params[:hs_code],
       value_amount: params[:value_amount],
@@ -75,8 +74,8 @@ put '/items/:id' do
       order_id: params[:order_id],
       single_item_per_parcel: params[:single_item_per_parcel] == "on"
     )
-    parcel = Parcel[@item.parcel_id]
-    shipment = Shipment[parcel.shipment_id]
+    @item.save
+    shipment = Shipment[@item.shipment_id]
     redirect to('/shipments/' + shipment.id.to_s)
 end
 
@@ -132,6 +131,16 @@ post '/shipments/:shipment_id/parcels' do
           erb :'parcels/_new', layout: false
     end
 end
+
+delete '/shipments/:shipment_id/parcels/:parcel_id/items/:id' do
+    item = Item[params[:id]]
+    parcel = Parcel[params[:parcel_id]]
+    parcel.remove_item(item)
+    parcel.save
+    redirect '/shipments/' + parcel.shipment_id.to_s
+end
+
+# /shipments/<%=parcel.shipment_id%>/parcels/<%= parcel.id %>/items/:id
 
 # get '/parcel/:id/edit' do
 #     @parcel = Parcel[params[:id]]

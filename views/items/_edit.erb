@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-item[:modal-<%= item[:item_id] %>" tabindex="-1" role="dialog" aria-labelledby="edit-item[:modal-label" aria-hidden="true">  
+<div class="modal fade" id="edit-item-modal-<%= item[:item_id] %>" tabindex="-1" role="dialog" aria-labelledby="edit-item[:modal-label" aria-hidden="true">  
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -6,7 +6,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="/items/<%= item[:item_id] %>" method="post">
+        <form action="/items/<%= item[:id] %>" method="post">
           <input type="hidden" name="_method" value="put">
           <div class="mb-3">
             <label for="weight" class="form-label">Weight</label>
@@ -19,10 +19,6 @@
           <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea class="form-control" id="description" name="description"><%= item[:description] %></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="quantity" class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="quantity" name="quantity" value="<%= item[:quantity] %>">
           </div>
           <div class="mb-3">
             <label for="sku" class="form-label">SKU</label>
@@ -52,7 +48,7 @@
             <input type="checkbox" class="form-check-input" id="single_item_per_parcel" name="single_item_per_parcel" <%= item[:single_item_per_parcel] ? 'checked' : '' %>>
             <label class="form-check-label" for="single_item_per_parcel">Single Item Per Parcel</label>
             </div>
-            <button data-bs-target="#edit-item[:modal-<%= item[:item_id] %>" type="submit" class="btn btn-primary">Save changes</button>
+            <button data-bs-target="#edit-item[:modal-<%= item[:id] %>" type="submit" class="btn btn-primary">Save changes</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </form>
             </div>
