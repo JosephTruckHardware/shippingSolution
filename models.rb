@@ -7,50 +7,9 @@ DB = Sequel.sqlite('db/db.sqlite')
 
 class Shipment < Sequel::Model
 	one_to_many :parcels_items
-	one_to_many :records
 	one_to_many :addresses
-
-	# def get_parcels
-	# 	parcels = Parcel.where(shipment_id: self.id).all
-	# 	return parcels
-	# end
-
-	# def get_parcel_count()
-	# 	count = 0
-	# 	parcels = get_parcels()
-	# 	parcels.each do |parcel|
-	# 		count += 1
-	# 	end
-	# 	return count
-	# end
-
-	# def get_total_weight()
-	# 	weight = 0.00
-	# 	parcels = get_parcels()
-	# 	parcels.each do |parcel|
-	# 		parcel.calculate_weight
-	# 		weight += parcel.weight
-	# 	end
-	# 	return weight
-	# end
-
-	# def get_total_items() 
-	# 	item_count = 0
-	# 	parcels = get_parcels()
-	# 	parcels.each do |parcel|
-	# 		item_count += parcel.total_items()
-	# 	end
-	# 	return item_count
-	# end
-
-	# def get_total_value()
-	# 	value = 0.00
-	# 	parcels = get_parcels()
-	# 	parcels.each do |parcel|
-	# 		value += parcel.total_value()
-	# 	end
-	# 	return value
-	# end
+	one_to_many :parcels
+	one_to_many :items
 
 	def get_shipping_to()
 		address = Address[self.shipping_to_address_id]
@@ -81,48 +40,26 @@ class Shipment < Sequel::Model
 end
 
 class ParcelItem < Sequel::Model(:parcels_items)
-	many_to_one :item 
-	many_to_one :parcel
+  many_to_one :item
+  many_to_one :parcel
+
+  def add_item(item, quantity)
+	parcel_item = ParcelItem.find_or_create(parcel_id: self.id, item_id: item.id)
+	parcel_item.quantity = quantity
+	parcel_item.save
+  end
 end
 
 class Parcel < Sequel::Model
-	many_to_many :items, through: :parcels_items 
-	# :select=>[Sequel[:items].*, Sequel[:parcels_items][:quantity]]
+  many_to_many :items, join_table: :parcels_items
 
-
-	# many_to_many :items, :select => [items.*, :parcel_items__qty]
-
-	# def calculate_weight() 
-	# 	weight = 0.00
-	# 	items = get_items()
-	# 	items.each do |item|
-	# 		weight += item[:weight] * item[:quantity]
-	# 	end
-	# 	self.weight = weight
-	# end
-
-	# def total_items()
-	# 	item_count = 0
-	# 	items = get_items()
-	# 	items.each do |item|
-	# 		item_count += item[:quantity]
-	# 	end
-	# 	return item_count
-	# end
-
-	# def total_value()
-	# 	value = 0.00
-	# 	items = get_items()
-	# 	items.each do |item|
-	# 		value += item[:value_amount] * item[:quantity]
-	# 	end
-	# 	return value
-	# end
+  def add_item(item)
+	parcels_items_dataset.insert(parcel_id: id, item_id: item.id)
+  end
 end
 
 class Item < Sequel::Model
-	many_to_many :parcels, through: :parcels_items
-
+  many_to_many :parcels, join_table: :parcels_items
 
 	# one_to_many :parcel_items
 	# many_to_many :parcels, left_key: :item_id, right_key: :parcel_id, join_table: :parcel_items
@@ -134,13 +71,13 @@ class Item < Sequel::Model
 end
 
 class Address < Sequel::Model
-	one_to_one :shipment
+  one_to_one :shipment
 end
 
 class Token < Sequel::Model
-	def before_save
-		expires_at = DateTime.now + 0.0415
-		self.token_expires_at = expires_at
-		super
-	end
+  def before_save
+	expires_at = DateTime.now + 0.0415
+	self.token_expires_at = expires_at
+	super
+  end
 end
