@@ -38,7 +38,21 @@ class Shipment < Sequel::Model
   end
 
   def get_total_weight
-    DB[:parcels_items].where(parcel_id: DB[:parcels].where(shipment_id: id).select(:id)).sum(:weight)
+    weight = 0.00
+    parcels_weight_dataset = parcels
+    parcels_weight_dataset.each do |parcel|
+      weight += parcel.weight
+    end
+    weight
+  end
+
+  def get_total_value
+    value = 0.00
+    parcels_value_dataset = parcels
+    parcels_value_dataset.each do |parcel|
+      value += parcel.get_total_value
+    end
+    value
   end
 end
 
@@ -50,6 +64,14 @@ end
 class Parcel < Sequel::Model(:parcels)
   one_to_many :parcels_items
   many_to_one :shipment
+
+  def get_total_value
+    value = 0.00
+    parcels_items_dataset.each do |parcel_item|
+      value += parcel_item.item.value_amount * parcel_item.quantity
+    end
+    value
+  end
 
   def add_item(item, quantity)
     parcel_item = parcels_items_dataset.where(item_id: item.id).first
