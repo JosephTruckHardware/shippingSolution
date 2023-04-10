@@ -1,39 +1,36 @@
 <!-- Add item to package modal -->
-
 <div class="modal fade" id="add-item-modal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addItemModalLabel">Add Item to Package</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="/shipments/<%= parcel.shipment_id %>/parcel/<%=parcel.id%>" method="post">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <select class="form-select" name="selected_item" onchange="setMaxAmount(this)">
-                        <% @unassigned_items.each do |item| %>
-                            <% item_w_details = Item[item[:item][:id]] %>
-                            <option value="<%= item_w_details.id %>" data-max-amount="<%= item[:quantity] %>"><%= item_w_details.description %> - <%= item_w_details.sku %></option>
-                        <% end %>
-                        </select>
-                        <input type="number" class="form-control" name="item_amount" id="item-amount" min="1" required>
-                        <span id="max-amount"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Item</button>
-                </div>
-            </form>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addItemModalLabel">Add Item to Package</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/shipments/<%= parcel.shipment_id %>/parcel/<%=parcel.id%>" method="post">
+        <div class="modal-body">
+          <div class="mb-3">
+            <select class="form-select" name="selected_item" onchange="setMaxAmount(this)">
+              <% @unassigned_items.each do |item| %>
+                <% item_w_details = Item[item[:item][:id]] %>
+                <option value="<%= item_w_details.id %>" data-max-amount="<%= item[:quantity] %>"><%= item_w_details.description %> - <%= item_w_details.sku %></option>
+              <% end %>
+            </select>
+            <input type="number" class="form-control" name="item_amount" id="item-amount" min="1" required>
+            <span id="max-amount"></span>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Item</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
-
-
 <script>
-function setMaxAmount(select) {
-    var maxAmount = select.options[select.selectedIndex].getAttribute('data-max-amount');
-    document.getElementById('item-amount').max = maxAmount;
-    document.getElementById('max-amount').innerHTML = 'Maximum: ' + maxAmount;
-}
+  function setMaxAmount(select) {
+      var maxAmount = select.options[select.selectedIndex].getAttribute('data-max-amount');
+      document.getElementById('item-amount').max = maxAmount;
+      document.getElementById('max-amount').innerHTML = 'Maximum: ' + maxAmount;
+  }
 </script>

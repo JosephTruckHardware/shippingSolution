@@ -1,44 +1,41 @@
 <h2>Parcel <%= parcel.id %></h2>
 <ul>
-    <li>Package Type: <%= parcel.package_type %></li>
-    <li>Weight: <%= parcel.weight %> <%= parcel.weight_unit %></li>
-    <li>Dimensions: <%= parcel.length %> x <%= parcel.width %> x <%= parcel.height %> <%= parcel.dimension_unit %></li>
-    <h4>Items: </h4>
-    <% parcel.get_items_detailed.each do |item| %>
-        <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
-    <% end %>
-    <!-- Button to open add item modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">Add Item</button>
-    <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
-
-    <!-- Delete parcel button -->
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteParcelModal">
+  <li>Package Type: <%= parcel.package_type %></li>
+  <li>Weight: <%= parcel.weight %> <%= parcel.weight_unit %></li>
+  <li>Dimensions: <%= parcel.length %> x <%= parcel.width %> x <%= parcel.height %> <%= parcel.dimension_unit %></li>
+  <h4>Items: </h4>
+  <% parcel.get_items_detailed.each do |item| %>
+    <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
+  <% end %>
+  <!-- Button to open add item modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">Add Item</button>
+  <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
+  <!-- Delete parcel button -->
+  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteParcelModal">
     Delete Parcel
-    </button>
+  </button>
 </ul>
-
 <!-- Delete parcel confirmation modal -->
 <div class="modal fade" id="deleteParcelModal" tabindex="-1" aria-labelledby="deleteParcelModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteParcelModalLabel">Confirm Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this parcel?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="/shipments/<%=parcel.shipment_id%>/parcels/<%= parcel.id %>" method="post">
-                    <input type="hidden" name="_method" value="delete">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteParcelModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this parcel?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="/shipments/<%=parcel.shipment_id%>/parcels/<%= parcel.id %>" method="post">
+          <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
-
 <script>
   $(document).on("click", ".btn-primary", function () {
     var parcelId = $(this).data('parcel-id');
