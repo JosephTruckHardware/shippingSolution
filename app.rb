@@ -134,7 +134,7 @@ end
 delete "/shipments/:shipment_id/parcels/:parcel_id/items/:id" do
   item = Item[params[:id]]
   parcel = Parcel[params[:parcel_id]]
-  parcel.remove_item(item)
+  parcel.remove_item_force(item)
   parcel.save
   redirect "/shipments/" + parcel.shipment_id.to_s
 end

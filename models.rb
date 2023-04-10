@@ -54,12 +54,17 @@ class Parcel < Sequel::Model(:parcels)
   def add_item(item, quantity)
     parcel_item = parcels_items_dataset.where(item_id: item.id).first
 
+    # If the item exists, update the quantity
     if parcel_item
-      # If the item exists, update the quantity
-      parcel_item.update(quantity: parcel_item[:quantity] + quantity)
-    else
-      # If the item does not exist, create a new parcel item
+      # Check if new quantity is greater than item quantity
+      if parcel_item[:quantity] + quantity >= item.quantity
+        parcel_item.update(quantity: parcel_item[:quantity] + quantity)
+      end
+    elsif item.quantity >= quantity
       ParcelsItem.create(item: item, parcel: self, quantity: quantity)
+    # If the item does not exist, create a new parcel item
+    else
+      raise "Cannot add more items than exist in shipment"
     end
   end
 
