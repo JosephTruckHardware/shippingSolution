@@ -13,7 +13,7 @@
   </button>
   <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
   <!-- Edit Parcel -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editParcelModal">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editParcelModal-<%=parcel.id%>">
     Edit Parcel
   </button>
   <%= erb :'parcels/_edit', locals: { parcel: parcel } %>
@@ -58,15 +58,14 @@
   });
 
   // Get the Edit Parcel button
-  const editParcelButton = document.querySelector('#editParcelButton');
+  const editParcelButton = document.querySelector('#editParcelButton-<%=parcel.id%>');
 
   // Listen for a click event on the button
   editParcelButton.addEventListener('click', () => {
-  // Get the modal element
-  const editParcelModal = document.querySelector('#editParcelModal');
+    // Get the modal element
+    const editParcelModal = document.querySelector('#editParcelModal-<%=parcel.id%>');
 
-  // Show the modal
-  const modal = new bootstrap.Modal(editParcelModal);
-  modal.show();
+    // Show the modal
+    const modal = new bootstrap.Modal(editParcelModal);
   });
 </script>
