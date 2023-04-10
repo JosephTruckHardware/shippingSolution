@@ -6,10 +6,8 @@ DB = Sequel.sqlite('db/db.sqlite')
 # DB.extension :pagination
 
 class Shipment < Sequel::Model
-	one_to_many :parcels_items
-	one_to_many :addresses
 	one_to_many :parcels
-	one_to_many :items
+	one_to_many :addresses
 
 	def get_shipping_to()
 		address = Address[self.shipping_to_address_id]
@@ -39,35 +37,46 @@ class Shipment < Sequel::Model
 	# end
 end
 
-class ParcelItem < Sequel::Model(:parcels_items)
-  many_to_one :item
-  many_to_one :parcel
-
-  def add_item(item, quantity)
-	parcel_item = ParcelItem.find_or_create(parcel_id: self.id, item_id: item.id)
-	parcel_item.quantity = quantity
-	parcel_item.save
-  end
-end
-
 class Parcel < Sequel::Model
-  many_to_many :items, join_table: :parcels_items
+	many_to_one :shipment
+	many_to_many :items, join_table: :parcels_items, left_key: :parcel_id, right_key: :item_id
+  
+	def add_item(item, quantity)
+	  # Check if the item already exists in the parcel
+	  parcel_item = DB[:parcels_items].where(item_id: item.id).first
+  
+	  if parcel_item
+		# If the item exists, update the quantity
+		parcel_item.update(quantity: parcel_item[:quantity] + quantity)
+	  else
+		# If the item does not exist, create a new parcel item
+		DB[:parcels_items].insert(item_id: item.id, parcel_id: self.id, quantity: quantity)
+	  end
+	end
 
-  def add_item(item)
-	parcels_items_dataset.insert(parcel_id: id, item_id: item.id)
-  end
+	def remove_item(item, quantity)
+	  # Check if the item exists in the parcel
+	  parcel_item = DB[:parcels_items].where(item_id: item.id).first
+  
+	  if parcel_item
+		# If the item exists, update the quantity
+		parcel_item.update(quantity: parcel_item[:quantity] - quantity)
+  
+		# If the quantity is 0, delete the item from the parcel
+		if parcel_item[:quantity] == 0
+		  parcel_item.delete
+		end
+	  end
+	end
+
+	def get_items()
+		items = DB[:parcels_items].where(parcel_id: self.id).select(:item_id, :quantity).all
+		return items
+	end
 end
 
 class Item < Sequel::Model
-  many_to_many :parcels, join_table: :parcels_items
-
-	# one_to_many :parcel_items
-	# many_to_many :parcels, left_key: :item_id, right_key: :parcel_id, join_table: :parcel_items
-
-	# def get_parcels()
-	# 	parcels = Parcel.join(:parcel_items, item_id: self.id).all
-	# 	return parcels
-	# end
+	many_to_many :parcels, join_table: :parcels_items, left_key: :item_id, right_key: :parcel_id
 end
 
 class Address < Sequel::Model
