@@ -8,8 +8,15 @@
     <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
   <% end %>
   <!-- Button to open add item modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">Add Item</button>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-item-modal">
+    Add Item
+  </button>
   <%= erb :'parcels/_add_items', locals: { parcel: parcel } %>
+  <!-- Edit Parcel -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editParcelModal">
+    Edit Parcel
+  </button>
+  <%= erb :'parcels/_edit', locals: { parcel: parcel } %>
   <!-- Delete parcel button -->
   <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteParcelModal">
     Delete Parcel
@@ -48,5 +55,18 @@
         $('#add-item-modal').modal('show');
       }
     });
+  });
+
+  // Get the Edit Parcel button
+  const editParcelButton = document.querySelector('#editParcelButton');
+
+  // Listen for a click event on the button
+  editParcelButton.addEventListener('click', () => {
+  // Get the modal element
+  const editParcelModal = document.querySelector('#editParcelModal');
+
+  // Show the modal
+  const modal = new bootstrap.Modal(editParcelModal);
+  modal.show();
   });
 </script>

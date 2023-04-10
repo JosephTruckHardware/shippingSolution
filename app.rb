@@ -111,6 +111,22 @@ post "/shipments/:shipment_id/parcel/:id" do
   redirect "shipments/" + parcel.shipment_id.to_s
 end
 
+put "/shipments/:shipment_id/parcels/:id" do
+  parcel = Parcel[params[:id]]
+  parcel.update(
+    package_type: params[:package_type],
+    weight: params[:weight],
+    weight_unit: params[:weight_unit],
+    length: params[:length],
+    width: params[:width],
+    height: params[:height],
+    dimension_unit: params[:dimension_unit],
+    tracking_number: params[:tracking_number]
+  )
+  parcel.save
+  redirect "/shipments/" + parcel.shipment_id.to_s
+end
+
 post "/shipments/:shipment_id/parcel/:parcel_id/remove_item/:id" do
 end
 
