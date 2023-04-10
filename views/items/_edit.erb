@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-item-modal-<%= item[:item_id] %>" tabindex="-1" role="dialog" aria-labelledby="edit-item[:modal-label" aria-hidden="true">  
+<div class="modal fade" id="edit-item-modal-<%= item[:item_id] %>" tabindex="-1" role="dialog" aria-labelledby="edit-item[:modal-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -35,23 +35,23 @@
           <div class="mb-3">
             <label for="value_currency" class="form-label">Value Currency</label>
             <input type="text" class="form-control" id="value_currency" name="value_currency" value="<%= item[:value_currency] %>">
-        </div>
-            <div class="mb-3">
+          </div>
+          <div class="mb-3">
             <label for="origin_country" class="form-label">Origin Country</label>
             <input type="text" class="form-control" id="origin_country" name="origin_country" value="<%= item[:origin_country] %>">
-            </div>
-            <div class="mb-3">
+          </div>
+          <div class="mb-3">
             <label for="order_id" class="form-label">Order ID</label>
             <input type="text" class="form-control" id="order_id" name="order_id" value="<%= item[:order_id] %>">
-            </div>
-            <div class="mb-3 form-check">
+          </div>
+          <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="single_item_per_parcel" name="single_item_per_parcel" <%= item[:single_item_per_parcel] ? 'checked' : '' %>>
             <label class="form-check-label" for="single_item_per_parcel">Single Item Per Parcel</label>
-            </div>
-            <button data-bs-target="#edit-item[:modal-<%= item[:id] %>" type="submit" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </form>
-            </div>
-        </div>
+          </div>
+          <button data-bs-target="#edit-item[:modal-<%= item[:id] %>" type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
