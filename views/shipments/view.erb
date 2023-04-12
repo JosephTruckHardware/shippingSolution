@@ -67,7 +67,7 @@
   // Function to auto package all parcels and reload the page
   function autoPackageAll() {
     fetch('/shipments/<%= @shipment.id %>/auto_package_all')
-      .then(response => response.text())
+      // .then(response => response.text()) IS THIS NEEDED?
       .then(() => {
         location.reload();
       });

@@ -74,7 +74,7 @@ class Shipment < Sequel::Model
       i = item.quantity
       while i > 0
         # Create a new parcel
-        parcel = Parcel.create(shipment: self, weight: 0.00)
+        parcel = Parcel.create(shipment: self, weight: Item[item.id].weight)
         # Add item to the parcel
         parcel.add_item(item, 1)
         i -= 1
