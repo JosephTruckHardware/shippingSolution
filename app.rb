@@ -130,6 +130,19 @@ end
 post "/shipments/:shipment_id/parcel/:parcel_id/remove_item/:id" do
 end
 
+# post "/shipments/:shipment_id/auto_package_all" do
+#   shipment = Shipment[params[:shipment_id]]
+#   puts "Auto packaging all parcels"
+#   shipment.auto_package_all
+#   redirect "/shipments/" + shipment.id.to_s
+# end
+
+get "/shipments/:id/auto_package_all" do
+  shipment = Shipment[params[:id]]
+  shipment.auto_package_all
+  puts "Auto packaging all parcels"
+end
+
 post "/shipments/:shipment_id/parcels" do
   @shipment = Shipment[params[:shipment_id]]
   parcel = @shipment.add_parcel(package_type: params[:package_type], length: params[:length], height: params[:height], width: params[:width], dimension_unit: params[:dimension_unit])

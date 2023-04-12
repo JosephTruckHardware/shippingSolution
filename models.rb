@@ -54,6 +54,33 @@ class Shipment < Sequel::Model
     end
     value
   end
+
+  def delete_all_packages
+    parcels.each do |parcel|
+      parcel.parcels_items.each(&:delete)
+      parcel.delete
+    end
+  end
+
+  def auto_package_all
+    if parcels.count > 0
+      delete_all_packages
+    end
+
+    # Get all items
+    items = Item.where(shipment_id: id).select(:id, :quantity)
+
+    items.each do |item|
+      i = item.quantity
+      while i > 0
+        # Create a new parcel
+        parcel = Parcel.create(shipment: self, weight: 0.00)
+        # Add item to the parcel
+        parcel.add_item(item, 1)
+        i -= 1
+      end
+    end
+  end
 end
 
 class ParcelsItem < Sequel::Model(:parcels_items)

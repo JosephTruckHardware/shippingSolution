@@ -19,9 +19,16 @@
 <p><strong>Metadata:</strong> <%= @shipment.metadata %></p>
 <p><strong>Updated By:</strong> <%= @shipment.updated_by %></p>
 <hr>
-<% @parcels.each do |parcel| %>
-  <%= erb :'parcels/_view', locals: { parcel: parcel } %>
-<% end %>
+<button id="auto-package-all-btn" class="btn btn-secondary">Auto Package All</button>
+<div id="parcels-container">
+  <% if @shipment.parcels.empty? %>
+    <p>No parcels have been added to this shipment yet.</p>
+  <% else %>
+    <% @parcels.each do |parcel| %>
+      <%= erb :'parcels/_view', locals: { parcel: parcel } %>
+    <% end %>
+  <% end %>
+</div>
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-parcel-modal">Add New Parcel</button>
 <%= erb :'parcels/_new' %>
 <hr>
@@ -36,8 +43,7 @@
       document.getElementById('rates-container').innerHTML = html;
       });
   });
-</script>
-<script>
+
   // Function to load new parcel form into modal via AJAX
   function loadNewParcelForm() {
     fetch('/shipments/<%= @shipment.id %>/new_parcel')
@@ -55,5 +61,20 @@
   // Clear new parcel form when modal is hidden
   $('#new-parcel-modal').on('hidden.bs.modal', () => {
     document.querySelector('#new-parcel-form').innerHTML = '';
+  });
+</script>
+<script>
+  // Function to auto package all parcels and reload the page
+  function autoPackageAll() {
+    fetch('/shipments/<%= @shipment.id %>/auto_package_all')
+      .then(response => response.text())
+      .then(() => {
+        location.reload();
+      });
+  }
+
+  // Bind click event to auto package all button
+  document.getElementById('auto-package-all-btn').addEventListener('click', () => {
+    autoPackageAll();
   });
 </script>
