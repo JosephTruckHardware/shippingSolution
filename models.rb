@@ -124,6 +124,7 @@ class Parcel < Sequel::Model(:parcels)
     end
   end
 
+  # Modify to allow for further queries
   def get_items
     DB[:parcels_items].where(parcel_id: id).select(:item_id, :quantity).all
   end

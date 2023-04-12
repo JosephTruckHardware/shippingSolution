@@ -15,11 +15,11 @@ Duty_account_number = "189090706"
 
 def get_token
   token = DB[:tokens].where { token_expires_at > Sequel::CURRENT_TIMESTAMP }.first
-  if token[:token_number] != ""
+  if !token.nil? && token[:token_number] != ""
     puts "token still valid"
     token[:token_number]
   else
-    puts "token expired, getting new token"
+    puts "No token found, getting new token"
     get_new_token
   end
 end
@@ -40,7 +40,8 @@ def get_new_token
     token.save
     token.token_number
   else
-    "Error getting token: #{JSON.parse(token.body)}"
+    puts "Error getting token: #{JSON.parse(token.body)}"
+    get_new_token
   end
 end
 
