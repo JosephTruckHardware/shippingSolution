@@ -139,11 +139,7 @@ end
 post "/shipments/:shipment_id/parcels" do
   @shipment = Shipment[params[:shipment_id]]
   parcel = @shipment.add_parcel(package_type: params[:package_type], length: params[:length], height: params[:height], width: params[:width], dimension_unit: params[:dimension_unit])
-  # parcel = Parcel.new(package_type: params[:package_type], length: params[:length],height: params[:height],width: params[:width], dimension_unit: params[:dimension_unit])
-  # parcelItem = ParcelItem.new()
-  # parcel_item = shipment.add_parcelItem()
 
-  # parcel.set(shipment_id: @shipment.id)
   if parcel.valid?
     parcel.save
     redirect "/shipments/#{params[:shipment_id]}"
@@ -160,25 +156,6 @@ delete "/shipments/:shipment_id/parcels/:parcel_id/items/:id" do
   parcel.save
   redirect "/shipments/" + parcel.shipment_id.to_s
 end
-
-# /shipments/<%=parcel.shipment_id%>/parcels/<%= parcel.id %>/items/:id
-
-# get '/parcel/:id/edit' do
-#     @parcel = Parcel[params[:id]]
-#     erb :'get_parcels/_edit', locals: { parcel: @parcel }, layout: false
-# end
-
-# put '/parcel/:id' do
-#     @parcel = Parcel[params[:id]]
-#     @parcel.update(
-#       package_type: params[:package_type],
-#       length: params[:length],
-#       width: params[:width],
-#       dimension_unit: params[:dimension_unit]
-#     )
-#     shipment = Shipment[parcel.shipment_id]
-#     redirect to('/shipments/' + shipment.id.to_s)
-# end
 
 get "/addresses/:id/edit" do
   @address = Address.where(id: params[:id]).first
@@ -212,8 +189,6 @@ get "/shipments/:id" do
   @shipment = Shipment[params[:id]]
   @parcels = Parcel.where(shipment_id: @shipment.id).all
   @unassigned_items = @shipment.get_unassigned_items
-  # @parcels_items = ParcelItem.where(shipment_id: @shipment.id).all
-  # @parcels  = Parcel.where(shipment_id: @shipment.id).all
   erb :"shipments/view"
 end
 
