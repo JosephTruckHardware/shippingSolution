@@ -98,6 +98,14 @@ delete "/shipments/:shipment_id/parcels/:id" do
   redirect "/shipments/" + parcel.shipment_id.to_s
 end
 
+get "/shipments/:shipment_id/merge_shipment/:merge_id" do
+  puts "Merging shipment #{params[:shipment_id]} with shipment #{params[:merge_id]}"
+  shipment = Shipment[params[:shipment_id]]
+  merge_shipment = Shipment[params[:merge_id]]
+  shipment.merge_shipment(merge_shipment)
+  redirect "/shipments/" + shipment.id.to_s
+end
+
 get "/shipments/:id/new_parcel" do
   @shipment = Shipment[params[:id]]
   erb :"parcels/_new", locals: {shipment: @shipment}, layout: false

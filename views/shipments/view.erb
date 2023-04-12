@@ -7,6 +7,10 @@
 <p><strong>Shipping To Address:</strong><%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_to } %></p>
 <p><strong>Shipping From Address:</strong><%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_from } %></p>
 <p><strong>Billed Address:</strong><%= erb :'addresses/_view', locals: { address: @shipment.get_billed_to } %></p>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mergeShipmentModal">
+  Merge Shipment
+</button>
+<%= erb :'shipments/_merge_shipment', locals: { shipment: @shipment } %>
 <p><strong>Required Date:</strong> <%= @shipment.required_date.strftime('%B %d, %Y') %></p>
 <p><strong>Tracking Number:</strong> <%= @shipment.tracking_number %></p>
 <p><strong>Carrier Name:</strong> <%= @shipment.carrier_name %></p>
@@ -78,3 +82,18 @@
     autoPackageAll();
   });
 </script>
+<script>
+  function mergeShipment() {
+    const mergeId = document.querySelector('#merge-shipment-id').value;
+    fetch(`/shipments/<%= @shipment.id %>/merge_shipment/${mergeId}`)
+      .then(response => response.text())
+      .then(html => {
+        document.querySelector('#mergeShipmentModal').innerHTML = html;
+        // hide the modal after the merge is completed
+        $('#mergeShipmentModal').modal('hide');
+        // reload the page
+        location.reload();
+      });
+  }
+</script>
+
