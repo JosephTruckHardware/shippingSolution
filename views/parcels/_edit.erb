@@ -1,0 +1,51 @@
+<div class="modal fade" id="editParcelModal-<%=parcel.id%>" tabindex="-1" aria-labelledby="editParcelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content"> 
+      <div class="modal-header">
+        <h5 class="modal-title" id="editParcelModalLabel">Edit Parcel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/shipments/<%=parcel.shipment_id%>/parcels/<%=parcel.id%>" method="POST">
+          <input type="hidden" name="_method" value="put">
+          <div class="mb-3">
+            <label for="packageType" class="form-label">Package Type</label>
+            <input type="text" class="form-control" id="packageType" name="package_type" value="<%= parcel.package_type %>">
+          </div>
+          <div class="mb-3">
+            <label for="weight" class="form-label">Weight</label>
+            <input type="number" step="0.01" class="form-control" id="weight" name="weight" value="<%= parcel.weight %>">
+          </div>
+          <div class="mb-3">
+            <label for="weightUnit" class="form-label">Weight Unit</label>
+            <input type="text" class="form-control" id="weightUnit" name="weight_unit" value="<%= parcel.weight_unit %>">
+          </div>
+          <div class="mb-3">
+            <label for="length" class="form-label">Length</label>
+            <input type="number" step="0.01" class="form-control" id="length" name="length" value="<%= parcel.length %>">
+          </div>
+          <div class="mb-3">
+            <label for="width" class="form-label">Width</label>
+            <input type="number" step="0.01" class="form-control" id="width" name="width" value="<%= parcel.width %>">
+          </div>
+          <div class="mb-3">
+            <label for="height" class="form-label">Height</label>
+            <input type="number" step="0.01" class="form-control" id="height" name="height" value="<%= parcel.height %>">
+          </div>
+          <div class="mb-3">
+            <label for="dimensionUnit" class="form-label">Dimension Unit</label>
+            <input type="text" class="form-control" id="dimensionUnit" name="dimension_unit" value="<%= parcel.dimension_unit %>">
+          </div>
+          <div class="mb-3">
+            <label for="trackingNumber" class="form-label">Tracking Number</label>
+            <input type="text" class="form-control" id="trackingNumber" name="tracking_number" value="<%= parcel.tracking_number %>">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

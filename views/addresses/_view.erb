@@ -12,8 +12,6 @@
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-address-modal-<%= address.id %>" data-item-id="<%= address.id %>">Edit</button>
   <%= erb :'addresses/_edit', locals: { address: address } %>
 </div>
-
-
 <script>
   $(document).on("click", ".btn-primary", function () {
     var itemId = $(this).data('item-id');

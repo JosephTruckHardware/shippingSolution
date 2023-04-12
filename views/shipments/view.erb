@@ -1,7 +1,8 @@
 <h1>Shipment Details</h1>
-
 <p><strong>Order ID:</strong> <%= @shipment.order_id %></p>
-<% if @shipment.order_date %><p><strong>Order Date:</strong> <%= @shipment.order_date.strftime('%B %d, %Y') %></p><% end %>
+<% if @shipment.order_date %>
+  <p><strong>Order Date:</strong> <%= @shipment.order_date.strftime('%B %d, %Y') %></p>
+<% end %>
 <p><strong>Status:</strong> <%= @shipment.status %></p>
 <p><strong>Shipping To Address:</strong><%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_to } %></p>
 <p><strong>Shipping From Address:</strong><%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_from } %></p>
@@ -11,37 +12,31 @@
 <p><strong>Carrier Name:</strong> <%= @shipment.carrier_name %></p>
 <p><strong>Service Name:</strong> <%= @shipment.service_name %></p>
 <!--<p><strong>Rate Response:</strong> <%= @shipment.rate_response %></p>-->
-<% if @shipment.shipped_at %><p><strong>Shipped At:</strong> <%= @shipment.shipped_at.strftime('%B %d, %Y') %></p><% end %>
+<% if @shipment.shipped_at %>
+  <p><strong>Shipped At:</strong> <%= @shipment.shipped_at.strftime('%B %d, %Y') %></p>
+<% end %>
 <p><strong>Paid By:</strong> <%= @shipment.paid_by %></p>
 <p><strong>Metadata:</strong> <%= @shipment.metadata %></p>
 <p><strong>Updated By:</strong> <%= @shipment.updated_by %></p>
-
 <hr>
-
-<% @parcels_items.each do |parcel| %>
-    <%= erb :'parcels/_view', locals: { parcel: parcel } %>
+<% @parcels.each do |parcel| %>
+  <%= erb :'parcels/_view', locals: { parcel: parcel } %>
 <% end %>
-
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-parcel-modal">Add New Parcel</button>
-
 <%= erb :'parcels/_new' %>
-
 <hr>
-
 <button id="get-rates-btn">Get Rates</button>
 <div id="rates-container"></div>
-
 <script>
-    document.getElementById('get-rates-btn').addEventListener('click', function() {
-    fetch('/shipments/<%=@shipment.id%>/get_rates')
-        .then(response => response.text())
-        .then(html => {
-        document.getElementById('get-rates-btn').style.display = 'none';
-        document.getElementById('rates-container').innerHTML = html;
-        });
-    });
+  document.getElementById('get-rates-btn').addEventListener('click', function() {
+  fetch('/shipments/<%=@shipment.id%>/get_rates')
+      .then(response => response.text())
+      .then(html => {
+      document.getElementById('get-rates-btn').style.display = 'none';
+      document.getElementById('rates-container').innerHTML = html;
+      });
+  });
 </script>
-
 <script>
   // Function to load new parcel form into modal via AJAX
   function loadNewParcelForm() {
