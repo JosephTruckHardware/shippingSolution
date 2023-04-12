@@ -56,16 +56,18 @@ class Shipment < Sequel::Model
   end
 
   def delete_all_packages
-    parcels.each do |parcel|
-      parcel.parcels_items.each(&:delete)
-      parcel.delete
+    # Only delete if parcels actually exist
+    if parcels.count > 0
+      # Delete all parcelItems, then the parcel itself
+      parcels.each do |parcel|
+        parcel.parcels_items.each(&:delete)
+        parcel.delete
+      end
     end
   end
 
   def auto_package_all
-    if parcels.count > 0
-      delete_all_packages
-    end
+    delete_all_packages
 
     # Get all items
     items = Item.where(shipment_id: id).select(:id, :quantity)
@@ -80,6 +82,28 @@ class Shipment < Sequel::Model
         i -= 1
       end
     end
+  end
+
+  def merge_shipment(shipment)
+    # Delete all parcelItems
+    delete_all_packages
+
+    # Point all items to new shipment
+    items = Item.where(shipment_id: shipment.id)
+    items.each do |item|
+      item.update(shipment_id: id)
+    end
+
+    # Delete the shipment
+    shipment.delete
+
+    # Auto package all items
+    auto_package_all
+  end
+
+  def delete
+    delete_all_packages
+    super
   end
 end
 
