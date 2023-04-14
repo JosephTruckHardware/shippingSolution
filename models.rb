@@ -60,7 +60,9 @@ class Shipment < Sequel::Model
     if parcels.count > 0
       # Delete all parcelItems, then the parcel itself
       parcels.each do |parcel|
-        parcel.parcels_items.each(&:delete)
+        if [:parcels_items].where(parcel_id: parcel.id).count > 0
+          parcel.parcels_items.each(&:delete)
+        end
         parcel.delete
       end
     end
