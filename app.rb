@@ -24,6 +24,8 @@ post "/api/shipments" do
   billing_address_data = json_data["billing_address"]
   shipping_from_data = json_data["shipping_from"]
   items_data = json_data["items"]
+  metadata = json_data["metadata"]
+  metadata = JSON.generate(metadata)
 
   shipping_to_address = Address.new(shipping_to_data)
   shipping_to_address.save
@@ -39,6 +41,7 @@ post "/api/shipments" do
   shipment.shipping_from_address_id = shipping_to_address.id
   shipment.shipping_to_address_id = shipping_from_address.id
   shipment.billed_address_id = billing_address.id
+  shipment.metadata = metadata
   shipment.save
 
   items_data.each do |item_data|

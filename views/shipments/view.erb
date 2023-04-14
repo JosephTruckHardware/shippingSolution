@@ -23,6 +23,8 @@
 <p><strong>Metadata:</strong> <%= @shipment.metadata %></p>
 <p><strong>Updated By:</strong> <%= @shipment.updated_by %></p>
 <hr>
+
+<%# Parcels section %>
 <button id="auto-package-all-btn" class="btn btn-secondary">Auto Package All</button>
 <div id="parcels-container">
   <% if @shipment.parcels.empty? %>
@@ -36,8 +38,11 @@
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-parcel-modal">Add New Parcel</button>
 <%= erb :'parcels/_new' %>
 <hr>
+
+<%# Rates section %>
 <button id="get-rates-btn">Get Rates</button>
 <div id="rates-container"></div>
+
 <script>
   document.getElementById('get-rates-btn').addEventListener('click', function() {
   fetch('/shipments/<%=@shipment.id%>/get_rates')
@@ -67,6 +72,8 @@
     document.querySelector('#new-parcel-form').innerHTML = '';
   });
 </script>
+
+<%# Autopacking scripts %>
 <script>
   // Function to auto package all parcels and reload the page
   function autoPackageAll() {
@@ -82,6 +89,8 @@
     autoPackageAll();
   });
 </script>
+
+<%# Merge shipment scripts %>
 <script>
   function mergeShipment() {
     const mergeId = document.querySelector('#merge-shipment-id').value;
@@ -96,4 +105,3 @@
       });
   }
 </script>
-
