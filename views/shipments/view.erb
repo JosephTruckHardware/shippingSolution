@@ -37,6 +37,11 @@
 </div>
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-parcel-modal">Add New Parcel</button>
 <%= erb :'parcels/_new' %>
+
+<hr>
+
+<%# Customs section %>
+
 <hr>
 
 <%# Rates section %>
@@ -72,8 +77,6 @@
     document.querySelector('#new-parcel-form').innerHTML = '';
   });
 </script>
-
-<%# Autopacking scripts %>
 <script>
   // Function to auto package all parcels and reload the page
   function autoPackageAll() {
@@ -89,8 +92,6 @@
     autoPackageAll();
   });
 </script>
-
-<%# Merge shipment scripts %>
 <script>
   function mergeShipment() {
     const mergeId = document.querySelector('#merge-shipment-id').value;
@@ -98,7 +99,7 @@
       .then(response => response.text())
       .then(html => {
         document.querySelector('#mergeShipmentModal').innerHTML = html;
-        hide the modal after the merge is completed
+        // hide the modal after the merge is completed
         $('#mergeShipmentModal').modal('hide');
         // reload the page
         location.reload();

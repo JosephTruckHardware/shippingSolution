@@ -60,7 +60,7 @@ class Shipment < Sequel::Model
     if parcels.count > 0
       # Delete all parcelItems, then the parcel itself
       parcels.each do |parcel|
-        if [:parcels_items].where(parcel_id: parcel.id).count > 0
+        if DB[:parcels_items].where(parcel_id: parcel.id).count > 0
           parcel.parcels_items.each(&:delete)
         end
         parcel.delete
@@ -87,9 +87,6 @@ class Shipment < Sequel::Model
   end
 
   def merge_shipment(shipment)
-    # Delete all parcelItems
-    delete_all_packages
-
     # Point all items to new shipment
     items = Item.where(shipment_id: shipment.id)
     items.each do |item|
