@@ -1,10 +1,17 @@
 require "./Fedex"
 require "./models"
+require "./shipment_pdf_generator"
+
+$LOAD_PATH.unshift("#{File.dirname(__FILE__)}/lib/weasyprint/lib")
+require "weasyprint"
+
+require "grover"
+require "weasyprint"
 require "sinatra"
-require "sinatra/reloader" if development?
 require "sinatra/flash"
 require "erb"
 require "date"
+require "json"
 
 get "/" do
   @title = "Home"
@@ -50,7 +57,7 @@ post "/api/shipments" do
     item.save
   end
 
-  {shipment: shipment.inspect}.to_json
+  { shipment: shipment.inspect }.to_json
 end
 
 get "/items/:id" do
@@ -60,7 +67,7 @@ end
 
 get "/items/:id/edit_modal" do
   @item = Item[params[:id]]
-  erb :"items/_edit", locals: {item: @item}, layout: false
+  erb :"items/_edit", locals: { item: @item }, layout: false
 end
 
 put "/items/:id" do
@@ -75,7 +82,7 @@ put "/items/:id" do
     value_currency: params[:value_currency],
     origin_country: params[:origin_country],
     order_id: params[:order_id],
-    single_item_per_parcel: params[:single_item_per_parcel] == "on"
+    single_item_per_parcel: params[:single_item_per_parcel] == "on",
   )
   @item.save
   shipment = Shipment[@item.shipment_id]
@@ -111,7 +118,30 @@ end
 
 get "/shipments/:id/new_parcel" do
   @shipment = Shipment[params[:id]]
-  erb :"parcels/_new", locals: {shipment: @shipment}, layout: false
+  erb :"parcels/_new", locals: { shipment: @shipment }, layout: false
+end
+
+get "/shipments/:shipment_id/invoice" do
+  @shipment = Shipment[params[:shipment_id]]
+  html = erb :"documents/invoice", locals: { shipment: @shipment }, layout: false
+
+  kit = WeasyPrint.new(html)
+
+  content_type 'application/pdf'
+
+  pdf = kit.to_pdf
+
+  pdf
+  # options = { format: "A4", margin: "1cm" }
+  # pdf = Grover.new(html).to_pdf
+
+  # content_type 'application/pdf'
+  # headers['Content-Disposition'] = 'inline'
+  # pdf
+
+
+  # pdf = Grover.new(shipment.invoice_html, format: "A4", margin: "0.5in")
+  # pdf.to_pdf
 end
 
 post "/shipments/:shipment_id/parcel/:id" do
@@ -132,7 +162,7 @@ put "/shipments/:shipment_id/parcels/:id" do
     width: params[:width],
     height: params[:height],
     dimension_unit: params[:dimension_unit],
-    tracking_number: params[:tracking_number]
+    tracking_number: params[:tracking_number],
   )
   parcel.save
   redirect "/shipments/" + parcel.shipment_id.to_s
@@ -185,7 +215,7 @@ post "/addresses/:id" do
     country: params[:country],
     postal_code: params[:postal_code],
     phone_number: params[:phone_number],
-    email: params[:email]
+    email: params[:email],
   )
   redirect back
 end
