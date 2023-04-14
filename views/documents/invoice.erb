@@ -1,189 +1,50 @@
-<<body style="max-width: 500px">
-  <div class="wrapper">
-    <%#  Structure -->
-        Header
-        Shipment locations, billing info
-        Shipment info
-        Line items 
-        Signatures  %>
-    <%# {% set fontSubtitleSize = "0.65em" %}
-        {% set fontSubTableSize = "0.6em" %}
-        {% set fontContentSize = "0.55em" %}
-        {% set countries = {'CA': 'Canada', 'US': 'USA'} %} %>
-    <% ship_from = Address[shipment.shipping_from_address_id]%>
-    <% ship_to = Address[shipment.shipping_to_address_id]%>
-    <% billed_to = Address[shipment.billed_address_id]%>
-    <%# {# Everything is based on a table of 7 columns, this is so the header repeats if the document is multiple pages #} %>
-    <table class="table is-bordered is-fullwidth">
-      <thead>
-        <tr>
-          <th style="border: none; width:33%" class="has-text-left"><img style="height: 50px;" src="https://www.truckhardware.ca/images/logo_ol.png"></th>
-          <th colspan="2" style="border: none; width:33%"></th>
-          <th colspan="5" style="border: none; width:33%" class="has-text-right">
-            <h2 class="title is-5">Commercial Invoice</h2>
-          </th>
-        </tr>
-        <tr style="font-size: {{fontSubtitleSize}}" class="is-uppercase has-text-left ">
-          <th style="border: none;">
-            <p class="has-text-weight-bold">Exporter</p>
-            <p class="has-text-weight-light"><%= ship_from.name%></p>
-            <p class="has-text-weight-light"><%= ship_from.address_line_1%></p>
-            <p class="has-text-weight-light"><%= ship_from.address_line_2%></p>
-            <p class="has-text-weight-light"><%= ship_from.city%>, <%= ship_from.state_code %>  <%= ship_from.postal_code %></p>
-            <p class="has-text-weight-light"><%= ship_from.country %></p>
-            <p class="has-text-weight-light"><%= ship_from.phone_number %></p>
-            <p class="has-text-weight-light is-lowercase"><%= ship_from.email %></p>
-          </th>
-          <th style="border: none;" colspan="2">
-            <p class="has-text-weight-bold">Consignee</p>
-            <p class="has-text-weight-light"><%= billed_to.name%></p>
-            <p class="has-text-weight-light"><%= billed_to.address_line_1%></p>
-            <p class="has-text-weight-light"><%= billed_to.address_line_2%></p>
-            <p class="has-text-weight-light"><%= billed_to.city%>, <%= billed_to.state_code %>  <%= billed_to.postal_code %></p>
-            <p class="has-text-weight-light"><%= billed_to.country %></p>
-            <p class="has-text-weight-light"><%= billed_to.phone_number %></p>
-            <p class="has-text-weight-light is-lowercase"><%= billed_to.email %></p>
-          </th>
-          <th style="border: none;" colspan="4">
-            <p class="has-text-weight-bold">Sold To / Importer</p>
-            <p class="has-text-weight-light"><%= ship_to.name%></p>
-            <p class="has-text-weight-light"><%= ship_to.address_line_1%></p>
-            <p class="has-text-weight-light"><%= ship_to.address_line_2%></p>
-            <p class="has-text-weight-light"><%= ship_to.city%>, <%= ship_to.state_code %>  <%= ship_to.postal_code %></p>
-            <p class="has-text-weight-light"><%= ship_to.country %></p>
-            <p class="has-text-weight-light"><%= ship_to.phone_number %></p>
-            <p class="has-text-weight-light is-lowercase"><%= ship_to.email %></p>
-          </th>
-        </tr>
-        <%# Nested table to get nice sizing %>
-        <tr>
-          <td style="border: none; margin: 0; padding: 0" colspan="7">
-            <table style="font-size: {{ fontSubTableSize }}" class="table has-text-centered is-fullwidth">
-              <tr style="border-bottom: 1px solid #dbdbdb">
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Ship Date:</td>
-                <td style="border: none" class="has-text-left">
-                  {% if shipment.options.shipment_date %}
-                  {{ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%Y-%m-%d') }}
-                  {% endif %}
-                </td>
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Tracking No:</td>
-                <td style="border: none" class="has-text-left">{{ shipment.tracking_number }}</td>
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Purchase Order No:</td>
-                <td style="border: none" class="has-text-left">{{ shipment.metadata.cust_po_no }}</td>
-              </tr>
-              <tr>
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Invoice No:</td>
-                <td style="border: none" class="has-text-left">{{ shipment.metadata.order_ids }}</td>
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Incoterms:</td>
-                <td style="border: none" class="has-text-left">{{ shipment.customs.incoterm }}</td>
-                <td style="border: none" class="has-text-right has-text-weight-semibold">Duty and Taxes Payable By:</td>
-                <td style="border: none" class="has-text-left">
-                  {% if shipment.customs and shipment.customs.duty.paid_by == 'third_party' %}
-                  {{ shipment.customs.duty.paid_by|upper|replace("_", " ") }} {{ shipment.customs.duty.account_number }}
-                  {% elif shipment.customs %}
-                  {{ shipment.customs.duty.paid_by }}
-                  {% endif %}
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </thead>
-    </table>
-    <table class="table is-bordered is-fullwidth">
-      <tbody class="has-text-centered">
-        <tr style="font-size: {{ fontSubTableSize }};">
-          <th>Description</th>
-          <th>SKU</th>
-          <th>Tariff Number</th>
-          <th>Country of Origin</th>
-          <th>No. of Units</th>
-          <th>Net Weight (lb)</th>
-          <th>Unit Value</th>
-          <th>Total Value</th>
-        </tr>
-        {# Loop for each item in the shipment #}
-        {% set totalUnits = {'value': 0} %}
-        {% set totalWeight = {'weight': 0} %}
-        {% set totalValue = {'value': 0} %}
-        {% for item in line_items %}
-        <tr style="font-size: {{ fontContentSize }};">
-          <td style="white-space: nowrap" class="has-text-left">
-            {{ item.description }}
-          </td>
-          <td>
-            {{ item.sku }}
-          </td>
-          <td>
-            {{ item.hs_code }}
-          </td>
-          <td>{{ item.origin_country }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{% if item.weight_unit == "KG" %}
-            {% set tempParcelWeight = (item.weight * 2.20462)|round %}
-            {% if totalWeight.update({"weight": tempParcelWeight + totalWeight.weight }) %} {% endif %}
-            {{ (tempParcelWeight * item.quantity)|round|int }} lb
-            {% else %}
-            {{ (item.weight * item.quantity)|round|int }} lb
-            {% if totalWeight.update({"weight": (item.weight * item.quantity) + totalWeight.weight }) %} {% endif %}</td>
-          {% endif %}
-          <td>{{ '%.2f' % item.value_amount }}</td>
-          <td>
-            {{ '%.2f' % (item.value_amount * item.quantity) }}
-            {% if totalValue.update({"value": (item.value_amount * item.quantity) + totalValue.value }) %} {% endif %}
-            {% if totalUnits.update({"value": item.quantity + totalUnits.value }) %} {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-        <tr style="font-size: {{ fontContentSize }};">
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td class="has-text-weight-bold" style="border: 0px solid">Totals:</td>
-          <td>{{ totalUnits.value }}</td>
-          <td>{{ totalWeight.weight|round|int }} lb</td>
-          <td style="border-bottom: 0px solid"></td>
-          <td>{{ '%.2f' % totalValue.value }}</td>
-        </tr>
-        <tr style="font-size: {{ fontContentSize }};">
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: none;"></td>
-          <td style="border: 0px solid"><span class="has-text-weight-bold">Currency Code:</span> {{ shipment.customs and shipment.customs.commodities[0].value_currency }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="table is-bordered is-fullwidth" style="font-size: {{ fontSubTableSize }}">
-      <tr>
-        <td>Special Instructions:<br>
-          <br>
-        </td>
-      </tr>
-      <tr>
-        <td>Declaration Statement: {{ shipment.customs and shipment.customs.content_description }}</td>
-      </tr>
-      <tr>
-        <td>I declare that all the information contained in this invoice to be true and correct.</td>
-      </tr>
-      <tr>
-        <td>Originator or Name of Company Representative if the invoice is being completed on behalf of a company or individual: {{shipment.customs.signer}}</td>
-      </tr>
-      <tr>
-        <td>Signature / Title / Date: <br>
-          <br>
-        </td>
-      </tr>
-    </table>
+<% ship_from = Address[shipment.shipping_from_address_id]%>
+<% ship_to = Address[shipment.shipping_to_address_id]%>
+<% billed_to = Address[shipment.billed_address_id]%>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <img src="https://www.truckhardware.ca/images/logo_ol.png" alt="logo" style="height: 50px;">
+        <h2 class="text-end">Commercial Invoice</h2>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <h5 class="mb-3">Exporter</h5>
+          <p><%= ship_from.name%></p>
+          <p><%= ship_from.address_line_1%></p>
+          <p><%= ship_from.address_line_2%></p>
+          <p><%= ship_from.city%>, <%= ship_from.state_code %> <%= ship_from.postal_code %></p>
+          <p><%= ship_from.country %></p>
+          <p><%= ship_from.phone_number %></p>
+          <p class="mb-0"><%= ship_from.email %></p>
+        </div>
+        <div class="col">
+          <h5 class="mb-3">Consignee</h5>
+          <p><%= billed_to.name%></p>
+          <p><%= billed_to.address_line_1%></p>
+          <p><%= billed_to.address_line_2%></p>
+          <p><%= billed_to.city%>, <%= billed_to.state_code %> <%= billed_to.postal_code %></p>
+          <p><%= billed_to.country %></p>
+          <p><%= billed_to.phone_number %></p>
+          <p class="mb-0"><%= billed_to.email %></p>
+        </div>
+        <div class="col">
+          <h5 class="mb-3">Sold To / Importer</h5>
+          <p><%= ship_to.name%></p>
+          <p><%= ship_to.address_line_1%></p>
+          <p><%= ship_to.address_line_2%></p>
+          <p><%= ship_to.city%>, <%= ship_to.state_code %> <%= ship_to.postal_code %></p>
+          <p><%= ship_to.country %></p>
+          <p><%= ship_to.phone_number %></p>
+          <p class="mb-0"><%= ship_to.email %></p>
+        </div>
+      </div>
+    </div>
   </div>
-</body>
-
-<style>
-  @page {
-    size: Letter portrait; /* Change from the default size of A4 */
-    margin: 3cm; /* Set margin on each page */
-  }
-</style>
+  <style>
+    @page {
+      size: Letter portrait; /* Change from the default size of A4 */
+      margin: 3cm; /* Set margin on each page */
+    }
+  </style>
