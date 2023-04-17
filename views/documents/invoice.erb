@@ -10,9 +10,8 @@
       top: 0;
       left: 0;
       right: 0;
+      height: 200pt; /* Add this line to set a fixed height */
       display: table-header-group;
-      /* font-size: 16pt; */
-      /* font-weight: bold; */
       text-align: center;
     }
     .header p {
@@ -24,13 +23,14 @@
       font-size: 12pt;
       margin-top: 200pt;
     }
+    
     /* Define the page layout */
     @page {
       @top-right{
         content: "Page " counter(page) " of " counter(pages);
       }
       size: Letter portrait;
-      margin: 0.5cm;
+      margin: 1cm;
       @top {
         content: element(header);
         padding-top: 1cm;
@@ -83,6 +83,120 @@
     </div>
   </div>
   <div class="body">
+    <table class="table table-responsive">
+      <thead>
+        <td>Description</td>
+        <td>SKU</td>
+        <td>Tariff Number</td>
+        <td>Country of Origin</td>
+        <td>No. of Units</td>
+        <td>Net Weight (x)</td>
+        <td>Unit Value</td>
+        <td>Total Value</td>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item[:description] %></td>
+            <td><%= item[:sku] %></td>
+            <td>TODO</td>
+            <td><%= item[:origin_country] %></td>
+            <td><%= item[:quantity] %></td>
+            <td><%= item[:weight] * item[:quantity] %></td>
+            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
+            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= shipment.get_total_weight %></td>
+          <td></td>
+          <td><%= shipment.get_total_value %></td>
+        </tr>
+      </tfoot>
+    </table>
+    <table class="table table-responsive">
+      <thead>
+        <td>Description</td>
+        <td>SKU</td>
+        <td>Tariff Number</td>
+        <td>Country of Origin</td>
+        <td>No. of Units</td>
+        <td>Net Weight (x)</td>
+        <td>Unit Value</td>
+        <td>Total Value</td>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item[:description] %></td>
+            <td><%= item[:sku] %></td>
+            <td>TODO</td>
+            <td><%= item[:origin_country] %></td>
+            <td><%= item[:quantity] %></td>
+            <td><%= item[:weight] * item[:quantity] %></td>
+            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
+            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= shipment.get_total_weight %></td>
+          <td></td>
+          <td><%= shipment.get_total_value %></td>
+        </tr>
+      </tfoot>
+    </table>
+    <table class="table table-responsive">
+      <thead>
+        <td>Description</td>
+        <td>SKU</td>
+        <td>Tariff Number</td>
+        <td>Country of Origin</td>
+        <td>No. of Units</td>
+        <td>Net Weight (x)</td>
+        <td>Unit Value</td>
+        <td>Total Value</td>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item[:description] %></td>
+            <td><%= item[:sku] %></td>
+            <td>TODO</td>
+            <td><%= item[:origin_country] %></td>
+            <td><%= item[:quantity] %></td>
+            <td><%= item[:weight] * item[:quantity] %></td>
+            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
+            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= shipment.get_total_weight %></td>
+          <td></td>
+          <td><%= shipment.get_total_value %></td>
+        </tr>
+      </tfoot>
+    </table>
     <table class="table table-responsive">
       <thead>
         <td>Description</td>
