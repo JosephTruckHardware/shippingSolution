@@ -1,0 +1,466 @@
+<!-- 
+Specifications
+- The label size is 6in x 4in.
+- The SVG viewBox for a 300dpi aspect ratio comes to > 0 -> 1800 width and 0 -> 1200 height.
+- Subsequent x-axis values are calculated as follows: x (px) = (x (in) * 1800 (px)) / 6 (in)
+- Subsequent y-axis values are calculated as follows: y (px) = (y (in) * 1200 (px)) / 4 (in)
+-->
+
+<!-- Loop for each seperate parcel in a shipment (at least 1 label per parcel) -->
+{% for parcel in shipment.parcels %}
+
+{% set items = parcel.get('items') %}
+
+{% if parcel.get('items')|length > 0 %}
+  {% set item = parcel.get('items')[0] %}
+{% endif %}
+
+{% if true or parcel.packaging_type == 'pallet' %}
+  <!-- PALLET LEVEL -->
+  {% if items|length > 1 %}
+    {% set label_type = "1724C" %}
+    {% set data_identifier = '5J' %}
+  {% else %}
+    {% set label_type = "1724B" %}
+    {% set data_identifier = '6J' %}
+  {% endif %}
+
+{% else %}
+  <!-- CONTAINER LEVEL -->
+  {% set label_type = "1724A" %}
+  {% set data_identifier = '1J' %}
+{% endif %}
+
+{% set duns = '259988608' %}
+{% set serial_number = (parcel.reference_number|default(''))[-9:]|int + 100000000 %}
+{% set serial_barcode = data_identifier ~ 'UN' ~ duns ~ serial_number %}
+{% set serial_human = 'UN ' ~ duns ~ ' ' ~ serial_number %}
+{% set dest_code = (shipment.recipient.company_name or shipment.recipient.person_name).split('#')[1] %}
+
+{%
+set ship_from = [
+  (shipment.shipper.company_name or shipment.shipper.person_name),
+  shipment.shipper.address_line1,
+  shipment.shipper.address_line2,
+  [shipment.shipper.city, [shipment.shipper.state_code, shipment.shipper.postal_code]|join(" ")]|join(", "),
+  shipment.shipper.phone
+]
+%}
+
+{%
+set ship_to = [
+  (shipment.recipient.company_name or shipment.recipient.person_name),
+  shipment.recipient.address_line1,
+  shipment.recipient.address_line2,
+  [shipment.recipient.city, [shipment.recipient.state_code, shipment.recipient.postal_code]|join(" ")]|join(", "),
+  shipment.recipient.phone
+]
+%}
+
+
+
+
+<!-- Seperate parcels of 8+ items into multiple labels -->
+{% set labelItems = [] %}
+{% for i in range(0, items|length, 8) %}
+  {{ labelItems.append(items[i:i+8]) or "" }}
+{% endfor %}
+
+<!-- Loop for each label if more than one label in this parcel -->
+{% for label in labelItems %}
+
+  <svg viewBox="0 0 1800 1200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" width="100%"
+      height="100%" style="border: 2px solid #000; font-family='Arial'">
+    <g>
+    <!-- ADDRESS FROM -->
+    <text x="10" y="30" fill="black" style="font-size: 20; font-weight: bold">
+      FROM:
+    </text>
+    {% set ns = namespace(c=70) %}
+    {% for line in ship_from if line %}
+    <text x="10" y="{{ ns.c }}" fill="black" style="font-size: 29; font-weight: bold">
+      {% set ns.c = ns.c + 30 %}
+      {{ line|upper }}
+    </text>
+    {% endfor %}
+    
+    <text x="10" y="220" fill="black" style="font-size: 29; font-weight: bold">
+      MADE IN CANADA
+    </text>
+    
+    <!-- ADDRESS TO -->
+    <text x="460" y="30" fill="black" style="font-size: 20; font-weight: bold">TO:</text>
+    {% set ns = namespace(c=70) %}
+    {% for line in ship_to if line %}
+    <text x="460" y="{{ ns.c }}" fill="black" style="font-size: 32; font-weight: bold">
+      {% set ns.c = ns.c + 30 %}
+      {{ line|upper }}
+    </text>
+    {% endfor %}
+  <!--   <text x="460" y="110" fill="black" style="font-size: 32; font-weight: bold">
+      {% if shipment.recipient.address_line1 %}{{ shipment.recipient.address_line1|upper }}{% endif %}
+    </text>
+    <text x="460" y="150" fill="black" style="font-size: 32; font-weight: bold">
+      {% if shipment.recipient.address_line2 %}{{ shipment.recipient.address_line2|upper }}{% endif %}
+      {% if shipment.recipient.address_line3 %}{{ shipment.recipient.address_line3|upper }}{% endif %}
+    </text>
+    <text x="460" y="190" fill="black" style="font-size: 32; font-weight: bold">
+      {{ [shipment.recipient.city|upper, [shipment.recipient.state_code|upper, shipment.recipient.postal_code|upper]|join(" ")]|join(", ") }}
+    </text> -->
+      
+    <text x="460" y="250" fill="black" style="font-size: 20; font-weight: bold">
+      PLANT/DOCK:
+    </text>
+    <text x="670" y="280" fill="black" style="font-size: 90; font-weight: 600;">
+      {{ dest_code }}
+    </text>
+
+    <!-- LICENSE PLATE -->
+    
+    <text x="10" y="630" fill="black" style="font-size: 20; font-weight: bold">
+      LICENSE PLATE ({{ data_identifier }})
+    </text>
+    <image x="40" y="650" width="1050" height="250"
+        href="data:image/svg+xml;base64,{{ utils.generate_code(serial_barcode, options=dict(width=8.5)) }}" />
+    <text x="200" y="850" fill="black" style="font-size: 55; font-weight: bold;">
+      {{ serial_human }}
+    </text>
+
+  {% if label_type == '1724C' %}
+      <!--  Type 1724C  -->
+        
+      <!--  Horizontal lines -->
+
+      <line x1="0" y1="300" x2="1800" y2="300" stroke="black" stroke-width="4" />
+      <line x1="0" y1="450" x2="1800" y2="450" stroke="black" stroke-width="4" />
+      <line x1="0" y1="600" x2="1800" y2="600" stroke="black" stroke-width="4" />
+      <line x1="0" y1="882.27" x2="1133" y2="882.27" stroke="black" stroke-width="4" />
+
+      <!--  Vertical lines -->
+
+      <line x1="450" y1="0" x2="450" y2="600" stroke="black" stroke-width="4" />
+      <line x1="900" y1="300" x2="900" y2="600" stroke="black" stroke-width="4" />
+      <!-- MIXED LABEL --><line x1="1206" y1="0" x2="1206" y2="300" stroke="black" stroke-width="4" />
+      <line x1="1350" y1="300" x2="1350" y2="600" stroke="black" stroke-width="4" />
+      <line x1="1133" y1="600" x2="1133" y2="1200" stroke="black" stroke-width="4" />
+      <line x1="650" y1="882.27" x2="650" y2="1200" stroke="black" stroke-width="4" />
+
+      <!--  Text Content -->
+      <text x="1320" y="130" fill="black" style="font-size: 120; font-weight: bold;">
+        MIXED
+        <tspan x="1345" y="250">LOAD</tspan>
+      </text>  
+        
+      <!--  Data Matrix -->
+      {% set ns = namespace(matrix_barcode='') %}
+      {% set ns.matrix_barcode = ns.matrix_barcode ~ "\u005B\u0029\u003E\u001E06\u001D" ~ serial_barcode ~
+        "\u001D7Q" ~ (parcel.weight * 0.4535924)|round|int ~
+        "GT\u001D21L" ~ dest_code ~
+        "\u001E" %}
+      
+      <!-- Part (8 per label)
+      Populate first row
+      if more than 4 parts, populate a second row
+      -->
+      {% set first_row = label[:4] %}
+      {% if label|length > 4 %}
+        {% set second_row = label[4:] %}
+      {% endif %}
+
+      <!-- First Row -->
+      {% for item in first_row %}
+        <text x="{{ loop.index0 * 450 + 10 }}" y="320" fill="black" style="font-size: 20; font-weight: bold">
+          PART NUMBER
+        </text>
+        <text x="{{ loop.index0 * 450 + 10 }}" y="360" fill="black" style="font-size: 50; font-weight: bold;">  
+          {{ item.sku }}
+        </text>
+        <text x="{{ loop.index0 * 450 + 295 }}" y="320" fill="black" style="font-size: 20; font-weight: bold">
+          TOTAL QTY
+        </text>
+        <text x="{{ loop.index0 * 450 + 295 }}" y="360" fill="black" style="font-size: 50; font-weight: bold;">  
+          {{ item.quantity }}
+        </text>
+        <text x="{{ loop.index0 * 450 + 10 }}" y="390" fill="black" style="font-size: 20; font-weight: bold;">
+          # PACKS
+        </text>
+        <text x="{{ loop.index0 * 450 + 10 }}" y="430" fill="black" style="font-size: 50; font-weight: bold;">  
+          {{ item.quantity }}
+        </text>
+        <text x="{{ loop.index0 * 450 + 295 }}" y="390" fill="black" style="font-size: 20; font-weight: bold">
+          QTY PER PACK
+        </text>
+        <text x="{{ loop.index0 * 450 + 295 }}" y="430" fill="black" style="font-size: 50; font-weight: bold;">
+          1
+        </text>
+      {% endfor %}
+
+      <!-- Second Row, if needed -->
+      {% if label|length > 4 %}
+        {% for item in second_row %}
+          <text x="{{ loop.index0 * 450 + 10 }}" y="470" fill="black" style="font-size: 20; font-weight: bold">
+            PART NUMBER
+          </text>
+          <text x="{{ loop.index0 * 450 + 10 }}" y="510" fill="black" style="font-size: 50; font-weight: bold;">  
+            {{ item.sku }}
+          </text>
+          <text x="{{ loop.index0 * 450 + 295 }}" y="470" fill="black" style="font-size: 20; font-weight: bold">
+            TOTAL QTY
+          </text>
+          <text x="{{ loop.index0 * 450 + 295 }}" y="510" fill="black" style="font-size: 50; font-weight: bold;">  
+            {{ item.quantity }}
+          </text>
+          <text x="{{ loop.index0 * 450 + 10 }}" y="540" fill="black" style="font-size: 20; font-weight: bold;">
+            # PACKS
+          </text>
+          <text x="{{ loop.index0 * 450 + 10 }}" y="580" fill="black" style="font-size: 50; font-weight: bold;">  
+            {{ item.quantity }}
+          </text> 
+          <text x="{{ loop.index0 * 450 + 295 }}" y="540" fill="black" style="font-size: 20; font-weight: bold">
+            QTY PER PACK
+          </text>
+          <text x="{{ loop.index0 * 450 + 295 }}" y="580" fill="black" style="font-size: 50; font-weight: bold;">
+            1
+          </text>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Create barcode for parts, loop for all in individual label -->
+      {% for item in label %}
+        {% set ns.matrix_barcode = ns.matrix_barcode ~ "06\u001DP" ~ item.sku ~
+          "\u001D7Q" ~ item.quantity|int ~
+          "PL\u001D7Q" ~ item.quantity|int ~
+          "PK\u001DQ1\u001E" %}
+      {% endfor %}
+      
+      {% set ns.matrix_barcode = ns.matrix_barcode ~ '\u0004' %}
+
+      <!-- Print barcode for parts; options=dict(width=matrix_width) -->
+      <image x="1225" y="660" width="470" height="470"
+          href="data:image/svg+xml;base64,{{ utils.generate_code(ns.matrix_barcode, 'datamatrix') }}" />
+        
+      <!--  DELIVERY NOTE -->
+      <text x="20" y="915" fill="black" style="font-size: 20; font-weight: bold;">
+        DELIVERY NOTE or PUS or INVOICE NUMBER:
+      </text>
+      <text x="1120" y="960" fill="black" style="font-size: 40; font-weight: bold;">
+      </text>
+
+      <text x="700" y="920" fill="black" style="font-size: 20; font-weight: bold">
+        GROSS WEIGHT:
+      </text>
+      <text x="700" y="1020" fill="black" style="font-size: 60; font-weight: bold;">
+        {{ (parcel.weight * 0.4535924)|round|int }} KG
+      </text>
+
+  {% elif label_type == '1724B' %}
+    
+      <!--  Type 1724B  -->
+
+      <!--  Horizontal lines -->
+
+      <line x1="0" y1="300" x2="1133" y2="300" stroke="black" stroke-width="4" />
+      <line x1="0" y1="436.8" x2="1800" y2="436.8" stroke="black" stroke-width="4" />
+      <line x1="0" y1="600" x2="1800" y2="600" stroke="black" stroke-width="4" />
+      <line x1="0" y1="882.27" x2="1800" y2="882.27" stroke="black" stroke-width="4" />
+
+      <!--  Vertical lines -->
+
+      <line x1="450" y1="0" x2="450" y2="300" stroke="black" stroke-width="4" />
+      <line x1="590.55" y1="300" x2="590.55" y2="436.8" stroke="black" stroke-width="4" />
+      <line x1="1133" y1="300" x2="1133" y2="882.27" stroke="black" stroke-width="4" />
+      <line x1="1000" y1="882.27" x2="1000" y2="1200" stroke="black" stroke-width="4" />
+
+      <!--  Text Content -->
+        
+      <!--  Data Matrix -->
+      {% set matrix_barcode = "\u005B\u0029\u003E\u001E06\u001DP" ~ item.sku ~
+        "\u001DQ1\u001D7Q" ~ item.quantity|int ~
+        "PL\u001D7Q" ~ item.quantity|int ~
+        "PK\u001D7Q" ~ (parcel.weight * 0.4535924)|round|int ~
+        "GT\u001D" ~ serial_barcode ~
+        "\u001DBCARTON\u001D20L\u001D21L" ~ dest_code ~
+        "\u001D6D" ~ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%Y%m%d') ~
+        "\u001E\u0004" %}
+      <image x="1280" y="40" width="420" height="360"
+          href="data:image/svg+xml;base64,{{ utils.generate_code(matrix_barcode, 'datamatrix') }}" />
+            
+      <!--  Quantity -->
+      <text x="10" y="325" fill="black" style="font-size: 20; font-weight: bold">
+        FIFO DATE:
+      </text>
+      <text x="40" y="400" fill="black" style="font-size: 85; font-weight: bold">
+        {{ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%d%b')|upper }}<tspan style="font-size: 60; font-weight: normal">{{ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%Y')|upper }}</tspan>
+      </text>
+        
+      <!--  Handling Code -->
+      <text x="605" y="325" fill="black" style="font-size: 20; font-weight: bold">
+        MATERIAL HANDLING CODE:
+      </text>
+      <text x="615" y="400" fill="black" style="font-size: 85; font-weight: bold">
+        <!-- NOT USED -->
+      </text>
+
+      <!--  Reference -->
+      <text x="10" y="465" fill="black" style="font-size: 20; font-weight: bold">
+        PART
+        <tspan x="10" y="485">NUMBER</tspan>
+      </text>
+      <text x="180" y="560" fill="black" style="font-size: 120; font-weight: bold">
+        {{ item.sku }}
+      </text>
+        
+      <!-- Reference -->
+      <text x="1150" y="465" fill="black" style="font-size: 20; font-weight: bold">
+        REFERENCE:
+      </text>
+      <text x="1160" y="560" fill="black" style="font-size: 100; font-weight: bold">
+        {% if false and orders[0] %}{{ orders[0].metadata.cust_po_no }}{% endif %}
+      </text>
+
+      <!-- Logistics Data -->
+      <text x="1150" y="660" fill="black" style="font-size: 20; font-weight: bold">
+        GROSS WEIGHT KG:
+      </text>
+      <text x="1450" y="660" fill="black" style="font-size: 60; font-weight: bold;">
+        {{ (parcel.weight * 0.4535924)|round|int }}
+      </text>
+      <text x="1150" y="720" fill="black" style="font-size: 20; font-weight: bold">
+        TOTAL QUANTITY:
+      </text>
+      <text x="1450" y="720" fill="black" style="font-size: 60; font-weight: bold;">
+        {{ item.quantity }}
+      </text>
+      <text x="1150" y="780" fill="black" style="font-size: 20; font-weight: bold">
+        # PACKS:
+      </text>
+      <text x="1450" y="780" fill="black" style="font-size: 60; font-weight: bold;">
+        {{ item.quantity }}
+      </text>
+      <text x="1150" y="840" fill="black" style="font-size: 20; font-weight: bold">
+        QTY/PACK:
+      </text>
+      <text x="1450" y="840" fill="black" style="font-size: 60; font-weight: bold;">
+        1
+      </text>
+
+      <text x="270" y="1020" fill="black" style="font-size: 120; font-weight: bold;">
+        MASTER
+        <tspan x="325" y="1150">LABEL</tspan>
+      </text>
+        
+      <!--  DELIVERY NOTE -->
+      <text x="1120" y="915" fill="black" style="font-size: 20; font-weight: bold">
+        DELIVERY NOTE or PUS or INVOICE NUMBER:
+      </text>
+      <text x="1120" y="960" fill="black" style="font-size: 40; font-weight: bold;">
+      </text>
+
+  {% elif label_type == "1724A" %}
+
+    <!--  Type 1724A  -->
+
+      <!--  Horizontal lines -->
+
+      <line x1="0" y1="300" x2="1133" y2="300" stroke="black" stroke-width="4" />
+      <line x1="0" y1="436.8" x2="1800" y2="436.8" stroke="black" stroke-width="4" />
+      <line x1="0" y1="600" x2="1133" y2="600" stroke="black" stroke-width="4" />
+      <line x1="0" y1="882.27" x2="1800" y2="882.27" stroke="black" stroke-width="4" />
+
+      <!--  Vertical lines -->
+
+      <line x1="236.22" y1="300" x2="236.22" y2="436.8" stroke="black" stroke-width="4" />
+      <line x1="431.25" y1="0" x2="431.25" y2="300" stroke="black" stroke-width="4" />
+      <line x1="590.55" y1="300" x2="590.55" y2="436.8" stroke="black" stroke-width="4" />
+      <line x1="1133" y1="300" x2="1133" y2="1200" stroke="black" stroke-width="4" />
+
+      <!--  Text Content -->
+        
+      <!--  Data Matrix -->
+      {% set matrix_barcode = "\u005B\u0029\u003E\u001E06\u001DP" ~ item.sku ~
+        "\u001DQ" ~ item.quantity|int ~
+        "\u001D" ~ serial_barcode ~
+        "\u001D20L\u001D21" ~ dest_code ~
+        "\u001D6D" ~ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%Y%m%d') ~
+        "\u001DBCARTON\u001D7Q" ~ (parcel.weight * 0.4535924)|round|int ~ "GT\u001E\u0004" %}
+
+      <image x="1280" y="35" width="420" height="360"
+          href="data:image/svg+xml;base64,{{ utils.generate_code(matrix_barcode, 'datamatrix') }}" />
+            
+      <!--  Quantity -->
+      <text x="10" y="325" fill="black" style="font-size: 20; font-weight: bold">
+        QUANTITY:
+      </text>
+      <text x="40" y="405" fill="black" style="font-size: 85; font-weight: bold">
+        {{ item.quantity }}
+      </text>
+        
+      <!--  Reference -->
+      <text x="250" y="325" fill="black" style="font-size: 20; font-weight: bold">
+        REFERENCE:
+      </text>
+      <text x="260" y="405" fill="black" style="font-size: 85; font-weight: bold">
+        <!-- NOT USED -->
+      </text>
+        
+      <!--  Handling code -->
+      <text x="605" y="325" fill="black" style="font-size: 20; font-weight: bold">
+        MATERIAL HANDLING CODE:
+      </text>
+      <text x="615" y="405" fill="black" style="font-size: 85; font-weight: bold">
+        <!-- NOT USED -->
+      </text>
+
+      <!--  Reference -->
+      <text x="10" y="465" fill="black" style="font-size: 20; font-weight: bold">
+        PART
+        <tspan x="10" y="485">NUMBER</tspan>
+      </text>
+      <text x="140" y="550" fill="black" style="font-size: 120; font-weight: bold">
+        {{ item.sku }}
+      </text>
+        
+      <!-- FIFO DATE -->
+      <text x="1150" y="465" fill="black" style="font-size: 20; font-weight: bold">
+        FIFO DATE:
+      </text>
+      <text x="1200" y="640" fill="black" style="font-size: 150; font-weight: bold">
+        {{ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%d%b')|upper }}
+      </text>
+      <text x="1400" y="740" fill="black" style="font-size: 60; font-weight: bold">
+        {{ utils.date_format(shipment.options.shipment_date, current_format='%Y-%m-%d', output_format='%Y')|upper }}
+      </text>
+      <text x="1450" y="820" fill="black" style="font-size: 20; font-weight: bold">
+        GROSS WEIGHT:
+      </text>
+      <text x="1470" y="860" fill="black" style="font-size: 25; font-weight: bold">
+        {{ parcel.weight|round|int }} KG
+      </text>
+      <text x="1150" y="820" fill="black" style="font-size: 20; font-weight: bold">
+        CONTAINER TYPE:
+      </text>
+      <text x="1170" y="860" fill="black" style="font-size: 25; font-weight: bold;">
+      </text>
+        
+      <!--  DELIVERY NOTE -->
+      <text x="1150" y="910" fill="black" style="font-size: 20; font-weight: bold">
+        DELIVERY NOTE or PUS or INVOICE NUMBER:
+      </text>
+      <text x="1160" y="960" fill="black" style="font-size: 40; font-weight: bold">
+      </text>
+        
+  {% endif %}
+
+    </g>
+
+  </svg>
+  {% endfor %}
+{% endfor %}
+
+<style type="text/css">
+    @page {
+        font-family: Arial, Helvetica, sans-serif;
+        size: 6in 4in;
+        margin: 0;
+    }
+</style>
