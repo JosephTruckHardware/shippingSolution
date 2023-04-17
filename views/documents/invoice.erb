@@ -1,239 +1,119 @@
 <% ship_from = Address[shipment.shipping_from_address_id]%>
 <% ship_to = Address[shipment.shipping_to_address_id]%>
 <% billed_to = Address[shipment.billed_address_id]%>
-<head>
-  <title>Invoice for Shipment <%= shipment.id %></title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">  <style>
-    /* Define the multi-line header */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 200pt; /* Add this line to set a fixed height */
-      display: table-header-group;
-      text-align: center;
-    }
-    .header p {
-      margin: 0;
-      padding: 5pt 0;
-    }
-    /* Define the body of the document */
-    .body {
-      font-size: 12pt;
-      margin-top: 200pt;
-    }
-    
-    /* Define the page layout */
-    @page {
-      @top-right{
-        content: "Page " counter(page) " of " counter(pages);
+<html>
+  <head>
+    <title>Invoice for Shipment <%= shipment.id %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+      /* Define the multi-line header */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 200pt; /* Add this line to set a fixed height */
+        display: table-header-group;
+        text-align: center;
       }
-      size: Letter portrait;
-      margin: 1cm;
-      @top {
-        content: element(header);
-        padding-top: 1cm;
+      /* Define the body of the document */
+      .body {
+        font-size: 12pt;
+        margin-top: 200pt;
+        margin-bottom: 100pt; /* Add this line to set a fixed bottom margin */
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="header container-fluid" id="header">
-    <div class="row">
-      <div class="col align-self-start text-start">
-        <img src="https://www.truckhardware.ca/images/logo_ol.png" style="height: 50px;" alt="Company Logo">
+
+      /* Define the page layout */
+      @page {
+        @top-right{
+          content: "Page " counter(page) " of " counter(pages);
+        }
+        size: Letter portrait;
+        margin: 1cm;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header container-fluid" id="header">
+      <div class="row">
+        <div class="col align-self-start text-start">
+          <img src="https://www.truckhardware.ca/images/logo_ol.png" style="height: 50px;" alt="Company Logo">
+        </div>
+        <div class="col align-self-end text-end">
+          <h1 class="h4 mb-0">Commercial Invoice</h1>
+        </div>
       </div>
-      <div class="col align-self-end text-end">
-        <h1 class="h4 mb-0">Commercial Invoice</h1>
+      <br>
+      <div class="row text-center">
+        <div class="col">
+          <h2 class="h4 mb-0">Ship From</h2>
+          <p class="mb-0"><%= ship_from.name %></p>
+          <p class="mb-0"><%= ship_from.address_line_1 %></p>
+          <% if ship_from.address_line_2 != "" && nil %>
+            <p class="mb-0"><%= ship_from.address_line_2 %></p>
+          <% end %>
+          <p class="mb-0"><%= ship_from.city %>, <%= ship_from.state_code %> <%= ship_from.country %></p>
+          <p class="mb-0"><%= ship_from.postal_code %></p>
+        </div>
+        <div class="col">
+          <h2 class="h4 mb-0">Ship To</h2>
+          <p class="mb-0"><%= ship_to.name %></p>
+          <p class="mb-0"><%= ship_to.address_line_1 %></p>
+          <% if ship_to.address_line_2 != "" && nil %>
+            <p class="mb-0"><%= ship_to.address_line_2 %></p>
+          <% end %>
+          <p class="mb-0"><%= ship_to.city %>, <%= ship_to.state_code %> <%= ship_to.country %></p>
+          <p class="mb-0"><%= ship_to.postal_code %></p>
+        </div>
+        <div class="col">
+          <h2 class="h4 mb-0">Billed To</h2>
+          <p class="mb-0"><%= billed_to.name %></p>
+          <p class="mb-0"><%= billed_to.address_line_1 %></p>
+          <% if billed_to.address_line_2 != "" && nil %>
+            <p class="mb-0"><%= billed_to.address_line_2 %></p>
+          <% end %>
+          <p class="mb-0"><%= billed_to.city %>, <%= billed_to.state_code %> <%= billed_to.country %></p>
+          <p class="mb-0"><%= billed_to.postal_code %></p>
+        </div>
       </div>
     </div>
-    <br>
-    <div class="row text-center">
-      <div class="col">
-        <h2 class="h4 mb-0">Ship From</h2>
-        <p class="mb-0"><%= ship_from.name %></p>
-        <p class="mb-0"><%= ship_from.address_line_1 %></p>
-        <% if ship_from.address_line_2 != "" && nil %>
-          <p class="mb-0"><%= ship_from.address_line_2 %></p>
-        <% end %>
-        <p class="mb-0"><%= ship_from.city %>, <%= ship_from.state_code %> <%= ship_from.country %></p>
-        <p class="mb-0"><%= ship_from.postal_code %></p>
-      </div>
-      <div class="col">
-        <h2 class="h4 mb-0">Ship To</h2>
-        <p class="mb-0"><%= ship_to.name %></p>
-        <p class="mb-0"><%= ship_to.address_line_1 %></p>
-        <% if ship_to.address_line_2 != "" && nil %>
-          <p class="mb-0"><%= ship_to.address_line_2 %></p>
-        <% end %>
-        <p class="mb-0"><%= ship_to.city %>, <%= ship_to.state_code %> <%= ship_to.country %></p>
-        <p class="mb-0"><%= ship_to.postal_code %></p>
-      </div>
-      <div class="col">
-        <h2 class="h4 mb-0">Billed To</h2>
-        <p class="mb-0"><%= billed_to.name %></p>
-        <p class="mb-0"><%= billed_to.address_line_1 %></p>
-        <% if billed_to.address_line_2 != "" && nil %>
-          <p class="mb-0"><%= billed_to.address_line_2 %></p>
-        <% end %>
-        <p class="mb-0"><%= billed_to.city %>, <%= billed_to.state_code %> <%= billed_to.country %></p>
-        <p class="mb-0"><%= billed_to.postal_code %></p>
-      </div>
+    <div class="body">
+      <table class="table table-responsive">
+        <thead>
+          <td>Description</td>
+          <td>SKU</td>
+          <td>Tariff Number</td>
+          <td>Country of Origin</td>
+          <td>No. of Units</td>
+          <td>Net Weight (x)</td>
+          <td>Unit Value</td>
+          <td>Total Value</td>
+        </thead>
+        <tbody>
+          <% @items.each do |item| %>
+            <tr>
+              <td><%= item[:description] %></td>
+              <td><%= item[:sku] %></td>
+              <td>TODO</td>
+              <td><%= item[:origin_country] %></td>
+              <td><%= item[:quantity] %></td>
+              <td><%= item[:weight] * item[:quantity] %></td>
+              <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
+              <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
+            </tr>
+          <% end %>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><%= shipment.get_total_weight %></td>
+            <td></td>
+            <td><%= shipment.get_total_value %></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
-  <div class="body">
-    <table class="table table-responsive">
-      <thead>
-        <td>Description</td>
-        <td>SKU</td>
-        <td>Tariff Number</td>
-        <td>Country of Origin</td>
-        <td>No. of Units</td>
-        <td>Net Weight (x)</td>
-        <td>Unit Value</td>
-        <td>Total Value</td>
-      </thead>
-      <tbody>
-        <% @items.each do |item| %>
-          <tr>
-            <td><%= item[:description] %></td>
-            <td><%= item[:sku] %></td>
-            <td>TODO</td>
-            <td><%= item[:origin_country] %></td>
-            <td><%= item[:quantity] %></td>
-            <td><%= item[:weight] * item[:quantity] %></td>
-            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
-            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><%= shipment.get_total_weight %></td>
-          <td></td>
-          <td><%= shipment.get_total_value %></td>
-        </tr>
-      </tfoot>
-    </table>
-    <table class="table table-responsive">
-      <thead>
-        <td>Description</td>
-        <td>SKU</td>
-        <td>Tariff Number</td>
-        <td>Country of Origin</td>
-        <td>No. of Units</td>
-        <td>Net Weight (x)</td>
-        <td>Unit Value</td>
-        <td>Total Value</td>
-      </thead>
-      <tbody>
-        <% @items.each do |item| %>
-          <tr>
-            <td><%= item[:description] %></td>
-            <td><%= item[:sku] %></td>
-            <td>TODO</td>
-            <td><%= item[:origin_country] %></td>
-            <td><%= item[:quantity] %></td>
-            <td><%= item[:weight] * item[:quantity] %></td>
-            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
-            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><%= shipment.get_total_weight %></td>
-          <td></td>
-          <td><%= shipment.get_total_value %></td>
-        </tr>
-      </tfoot>
-    </table>
-    <table class="table table-responsive">
-      <thead>
-        <td>Description</td>
-        <td>SKU</td>
-        <td>Tariff Number</td>
-        <td>Country of Origin</td>
-        <td>No. of Units</td>
-        <td>Net Weight (x)</td>
-        <td>Unit Value</td>
-        <td>Total Value</td>
-      </thead>
-      <tbody>
-        <% @items.each do |item| %>
-          <tr>
-            <td><%= item[:description] %></td>
-            <td><%= item[:sku] %></td>
-            <td>TODO</td>
-            <td><%= item[:origin_country] %></td>
-            <td><%= item[:quantity] %></td>
-            <td><%= item[:weight] * item[:quantity] %></td>
-            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
-            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><%= shipment.get_total_weight %></td>
-          <td></td>
-          <td><%= shipment.get_total_value %></td>
-        </tr>
-      </tfoot>
-    </table>
-    <table class="table table-responsive">
-      <thead>
-        <td>Description</td>
-        <td>SKU</td>
-        <td>Tariff Number</td>
-        <td>Country of Origin</td>
-        <td>No. of Units</td>
-        <td>Net Weight (x)</td>
-        <td>Unit Value</td>
-        <td>Total Value</td>
-      </thead>
-      <tbody>
-        <% @items.each do |item| %>
-          <tr>
-            <td><%= item[:description] %></td>
-            <td><%= item[:sku] %></td>
-            <td>TODO</td>
-            <td><%= item[:origin_country] %></td>
-            <td><%= item[:quantity] %></td>
-            <td><%= item[:weight] * item[:quantity] %></td>
-            <td>$<%= item[:value_amount] %> <%= item[:value_currency] %></td>
-            <td>$<%= item[:value_amount] * item[:quantity] %>  <%= item[:value_currency] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><%= shipment.get_total_weight %></td>
-          <td></td>
-          <td><%= shipment.get_total_value %></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-</body>
+  </body>
+</html>
