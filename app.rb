@@ -299,15 +299,21 @@ get "/shipments/:shipment_id/invoice" do
   pdf = kit.to_pdf
 
   pdf
-  # options = { format: "A4", margin: "1cm" }
-  # pdf = Grover.new(html).to_pdf
+end
 
-  # content_type 'application/pdf'
-  # headers['Content-Disposition'] = 'inline'
-  # pdf
+# Get a GM1724 Label for a shipment
+get "/shipments/:shipment_id/gm1724" do
+  @shipment = Shipment[params[:shipment_id]]
+  @items = DB[:items].where(shipment_id: params[:shipment_id]).all
+  html = erb :"documents/gm1724", locals: { shipment: @shipment }, layout: false
 
-  # pdf = Grover.new(shipment.invoice_html, format: "A4", margin: "0.5in")
-  # pdf.to_pdf
+  kit = WeasyPrint.new(html)
+
+  content_type "application/pdf"
+
+  pdf = kit.to_pdf
+
+  pdf
 end
 
 post "/shipments/:shipment_id/parcel/:parcel_id/remove_item/:id" do
