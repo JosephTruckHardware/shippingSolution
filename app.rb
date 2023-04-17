@@ -1,12 +1,13 @@
-require "./Fedex"
-require "./models"
-require "./shipment_pdf_generator"
+# require relatives
+require_relative "Fedex"
+require_relative "models"
+require_relative "shipment_pdf_generator"
 
+# Custom WeasyPrint gem in lib/weasyprint/lib/weasyprint.rb
 $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/lib/weasyprint/lib")
 require "weasyprint"
 
-require "grover"
-require "weasyprint"
+# Standard gems
 require "sinatra"
 require "sinatra/flash"
 require "erb"
@@ -33,25 +34,6 @@ end
 # get "/items/:id/edit_modal" do
 #   @item = Item[params[:id]]
 #   erb :"items/_edit", locals: { item: @item }, layout: false
-# end
-
-# put "/items/:id" do
-#   @item = Item[params[:id]]
-#   @item.update(
-#     weight: params[:weight],
-#     weight_unit: params[:weight_unit],
-#     description: params[:description],
-#     sku: params[:sku],
-#     hs_code: params[:hs_code],
-#     value_amount: params[:value_amount],
-#     value_currency: params[:value_currency],
-#     origin_country: params[:origin_country],
-#     order_id: params[:order_id],
-#     single_item_per_parcel: params[:single_item_per_parcel] == "on",
-#   )
-#   @item.save
-#   shipment = Shipment[@item.shipment_id]
-#   redirect to("/shipments/" + shipment.id.to_s)
 # end
 
 # Edit an address
@@ -243,7 +225,27 @@ end
 # Edit item in a package
 get "/shipments/:shipment_id/parcels/:parcel_id/items/:id/edit" do
   @item = Item[params[:id]]
+  @parcel = Parcel[params[:parcel_id]]
   erb :"items/_edit", layout: false
+end
+
+put "/items/:id" do
+  @item = Item[params[:id]]
+  @item.update(
+    weight: params[:weight],
+    weight_unit: params[:weight_unit],
+    description: params[:description],
+    sku: params[:sku],
+    hs_code: params[:hs_code],
+    value_amount: params[:value_amount],
+    value_currency: params[:value_currency],
+    origin_country: params[:origin_country],
+    order_id: params[:order_id],
+    single_item_per_parcel: params[:single_item_per_parcel] == "on",
+  )
+  @item.save
+  shipment = Shipment[@item.shipment_id]
+  redirect to("/shipments/" + shipment.id.to_s)
 end
 
 # Saved edited item in a package
