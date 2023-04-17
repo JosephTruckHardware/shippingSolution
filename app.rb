@@ -289,6 +289,7 @@ end
 # Get the invoice for a shipment
 get "/shipments/:shipment_id/invoice" do
   @shipment = Shipment[params[:shipment_id]]
+  @items = DB[:items].where(shipment_id: params[:shipment_id]).all
   html = erb :"documents/invoice", locals: { shipment: @shipment }, layout: false
 
   kit = WeasyPrint.new(html)
