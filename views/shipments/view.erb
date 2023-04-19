@@ -23,24 +23,38 @@
   </div>
   <div class="col text-start">
     <p class="h5">Service Level</p>
-    <p class="text-muted"><%= @shipment.service_name.to_s.upcase %>Test</p>
+    <p class="text-muted"><%= @shipment.service_name.to_s.upcase %>TEST</p>
   </div>
 </div>
-<p class="h4"> Shipment Details</p>
+<p class="h4">Shipment Details</p>
 <hr>
 <div class="mt-3 row align-items-start">
   <div class="col">
-  <p class="h5">Address</p>
-  <%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_to } %>
+    <p class="h5">Address</p>
+    <%= erb :'addresses/_view', locals: { address: @shipment.get_shipping_to } %>
   </div>
   <div class="col">
-  <p class="h5">Bill</p>
+    <p class="h5">Bill</p>
+    <%= erb :'addresses/_view', locals: { address: @shipment.get_billed_to } %>
   </div>
   <div class="col">
-  <p class="h5">Options</p>
+    <p class="h5">Options</p>
+    <!-- TODO -->
+    <p class="h6">Shipment date: USD</p>
+    <p class="h6">Value: USD</p>
+    <p class="h6">Paperless trade: USD</p>
+    <p class="h6">Signature confirmation: USD</p>
   </div>
 </div>
+<p class="h4 mt-3">Package(s)</p>
+<hr>
 
+
+
+
+<br>
+<br>
+<br>
 
 
 <h1>Shipment Details</h1>
