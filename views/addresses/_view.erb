@@ -1,31 +1,13 @@
+<a data-bs-toggle="modal" data-bs-target="#edit-address-modal-<%= address.id %>" data-item-id="<%= address.id %>">
 <div class="address" id="address-<%= address.id %>">
-  <div class="address-type"><%= address.address_type %></div>
-  <div class="name"><%= address.name %></div>
-  <div class="address-line-1"><%= address.address_line_1 %></div>
-  <div class="address-line-2"><%= address.address_line_2 %></div>
-  <div class="city"><%= address.city %></div>
-  <div class="state-code"><%= address.state_code %></div>
-  <div class="country"><%= address.country %></div>
-  <div class="postal-code"><%= address.postal_code %></div>
-  <div class="phone-number"><%= address.phone_number %></div>
-  <div class="email"><%= address.email %></div>
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-address-modal-<%= address.id %>" data-item-id="<%= address.id %>">Edit</button>
+  <p class="h6"><%= address.name %></p>
+  <p class="h6 text-muted"><%= address.address_line_1 %> <% if address.address_line_2 != '' %><%= address.address_line_2 %> <% end %><%= address.city %> <%= address.state_code %> <%= address.country %> <%= address.postal_code %></p>
+  <p class="h6 text-muted"><%= address.email %></p>
+  <p class="h6 text-muted"><%= address.phone_number %></p>
   <%= erb :'addresses/_edit', locals: { address: address } %>
 </div>
+</a>
 <script>
-  $(document).on("click", ".btn-primary", function () {
-    var itemId = $(this).data('item-id');
-    $.ajax({
-      url: '/addresses/' + itemId + '/edit',
-      type: 'GET',
-      dataType: 'html',
-      success: function(data) {
-        $('#edit-address-modal-' + itemId).html(data);
-        $('#edit-address-modal-' + itemId).modal('show');
-      }
-    });
-  });
-
   $(document).on("submit", "#edit-address-form", function (event) {
     event.preventDefault();
     var itemId = $(this).data('item-id');
