@@ -1,4 +1,33 @@
-<h2>Parcel <%= parcel.id %></h2>
+<div class="card">
+  <div class="mt-2 mb-2 row align-items-start">
+    <div class="col text-center">
+      <p class="h6">Package Type</p>
+      <p class="h6 text-muted"><%= parcel.package_type %></p>
+    </div>
+    <div class="col text-center">
+      <p class="h6">Dimensions</p>
+      <p class="h6 text-muted"><%= parcel.length %> x <%= parcel.width %> x <%= parcel.height %> <%= parcel.dimension_unit %></p>
+    </div>
+    <div class="col text-center">
+      <p class="h6">Weight</p>
+      <p class="h6 text-muted"><%= parcel.weight %> <%= parcel.weight_unit %></p>
+    </div>
+    <div class="col text-center">
+      <p class="h6">Quantity</p>
+      <!-- TODO ADD MULTIPLE OF A PACKGE -->
+      <p class="h6 text-muted">12</p>
+    </div>
+  </div>
+  <div class="mt-2 mb-2">
+    <% parcel.get_items_detailed.each do |item| %>
+      <%= erb :'items/_item', locals: { item: item, parcel: parcel} %>
+    <% end %>
+  </div>
+</div>
+
+
+
+
 <ul>
   <li>Package Type: <%= parcel.package_type %></li>
   <li>Weight: <%= parcel.weight %> <%= parcel.weight_unit %></li>

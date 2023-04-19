@@ -48,6 +48,19 @@
 </div>
 <p class="h4 mt-3">Package(s)</p>
 <hr>
+<div>
+  <% if @shipment.parcels.empty? %>
+    <p>No parcels have been added to this shipment yet.</p>
+  <% else %>
+    <% @parcels.each do |parcel| %>
+      <%= erb :'parcels/_view', locals: { parcel: parcel } %>
+    <% end %>
+  <% end %>
+</div>
+
+
+
+
 
 
 
@@ -55,8 +68,6 @@
 <br>
 <br>
 <br>
-
-
 <h1>Shipment Details</h1>
 <p><strong>Order ID:</strong> <%= @shipment.order_id %></p>
 <% if @shipment.order_date %>

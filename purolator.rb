@@ -29,44 +29,44 @@ def get_rates()
 
   # Build the request XML
   xml_request = <<~XML
-                                        <ns1:EstimateShipmentRequest>
-                                    <ns1:Shipment>
-                                <ns1:SenderInformation>
-                            <ns1:Address>
-                        <ns1:City>Toronto</ns1:City>
-                    <ns1:Province>ON</ns1:Province>
-                <ns1:Country>CA</ns1:Country>
-            <ns1:PostalCode>M5V2J4</ns1:PostalCode>
-        </ns1:Address>
-    </ns1:SenderInformation>
-<ns1:ReceiverInformation>
-<ns1:Address>
-<ns1:City>Vancouver</ns1:City>
-<ns1:Province>BC</ns1:Province>
-<ns1:Country>CA</ns1:Country>
-<ns1:PostalCode>V6B4N9</ns1:PostalCode>
-</ns1:Address>
-</ns1:ReceiverInformation>
-<ns1:PackageInformation>
-<ns1:Weight>
-<ns1:Value>10</ns1:Value>
-</ns1:Weight>
-<ns1:Dimensions>
-<ns1:Length>10</ns1:Length>
-<ns1:Width>10</ns1:Width>
-<ns1:Height>10</ns1:Height>
-</ns1:Dimensions>
-</ns1:PackageInformation>
-<ns1:ServiceType>PUROPRIO</ns1:ServiceType>
-</ns1:Shipment>
-<ns1:ShowAlternativeServicesIndicator>true</ns1:ShowAlternativeServicesIndicator>
-<ns1:TotalWeight>
-<ns1:Value>10</ns1:Value>
-</ns1:TotalWeight>
-<ns1:TotalPieces>
-<ns1:Value>1</ns1:Value>
-</ns1:TotalPieces>
-</ns1:EstimateShipmentRequest>
+                                        <v2:EstimateShipmentRequest>
+                                    <v2:Shipment>
+                                <v2:SenderInformation>
+                            <v2:Address>
+                        <v2:City>Toronto</v2:City>
+                    <v2:Province>ON</v2:Province>
+                <v2:Country>CA</v2:Country>
+            <v2:PostalCode>M5V2J4</v2:PostalCode>
+        </v2:Address>
+    </v2:SenderInformation>
+<v2:ReceiverInformation>
+<v2:Address>
+<v2:City>Vancouver</v2:City>
+<v2:Province>BC</v2:Province>
+<v2:Country>CA</v2:Country>
+<v2:PostalCode>V6B4N9</v2:PostalCode>
+</v2:Address>
+</v2:ReceiverInformation>
+<v2:PackageInformation>
+<v2:Weight>
+<v2:Value>10</v2:Value>
+</v2:Weight>
+<v2:Dimensions>
+<v2:Length>10</v2:Length>
+<v2:Width>10</v2:Width>
+<v2:Height>10</v2:Height>
+</v2:Dimensions>
+</v2:PackageInformation>
+<v2:ServiceType>PUROPRIO</v2:ServiceType>
+</v2:Shipment>
+<v2:ShowAlternativeServicesIndicator>true</v2:ShowAlternativeServicesIndicator>
+<v2:TotalWeight>
+<v2:Value>10</v2:Value>
+</v2:TotalWeight>
+<v2:TotalPieces>
+<v2:Value>1</v2:Value>
+</v2:TotalPieces>
+</v2:EstimateShipmentRequest>
   XML
 
   # Send the request using Savon
@@ -76,7 +76,7 @@ def get_rates()
                                                              "wsu:Timestamp" => { "wsu:Created" => Time.now.utc.iso8601 } })
 
   xml_response = response.to_xml
-  shipping_cost = xml_response.xpath("//ns1:TotalPrice").text.to_f
+  shipping_cost = xml_response.xpath("//v2:TotalPrice").text.to_f
 
   puts "The estimated shipping cost is $#{shipping_cost}"
 end
@@ -88,29 +88,29 @@ def get_rate()
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
   <SOAP-ENV:Header>
-    <ns1:RequestContext>
-      <ns1:Version>1.3</ns1:Version>
-      <ns1:Language>en</ns1:Language>
-      <ns1:GroupID>xxx</ns1:GroupID>
-      <ns1:RequestReference>Rating Example</ns1:RequestReference>
-    </ns1:RequestContext>
+    <v2:RequestContext>
+      <v2:Version>1.3</v2:Version>
+      <v2:Language>en</v2:Language>
+      <v2:GroupID>xxx</v2:GroupID>
+      <v2:RequestReference>Rating Example</v2:RequestReference>
+    </v2:RequestContext>
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
-    <ns1:GetQuickEstimateRequest>
-      <ns1:BillingAccountNumber></ns1:BillingAccountNumber>
-      <ns1:SenderPostalCode>T1H5H3</ns1:SenderPostalCode>
-      <ns1:ReceiverAddress>
-        <ns1:City>Lethbridge</ns1:City>
-        <ns1:Province>AB</ns1:Province>
-        <ns1:Country>CA</ns1:Country>
-        <ns1:PostalCode>T0L0V2</ns1:PostalCode>
-      </ns1:ReceiverAddress>
-      <ns1:PackageType>CustomerPackaging</ns1:PackageType>
-      <ns1:TotalWeight>
-        <ns1:Value>10</ns1:Value>
-        <ns1:WeightUnit>lb</ns1:WeightUnit>
-      </ns1:TotalWeight>
-    </ns1:GetQuickEstimateRequest>
+    <v2:GetQuickEstimateRequest>
+      <v2:BillingAccountNumber></v2:BillingAccountNumber>
+      <v2:SenderPostalCode>T1H5H3</v2:SenderPostalCode>
+      <v2:ReceiverAddress>
+        <v2:City>Lethbridge</v2:City>
+        <v2:Province>AB</v2:Province>
+        <v2:Country>CA</v2:Country>
+        <v2:PostalCode>T0L0V2</v2:PostalCode>
+      </v2:ReceiverAddress>
+      <v2:PackageType>CustomerPackaging</v2:PackageType>
+      <v2:TotalWeight>
+        <v2:Value>10</v2:Value>
+        <v2:WeightUnit>lb</v2:WeightUnit>
+      </v2:TotalWeight>
+    </v2:GetQuickEstimateRequest>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 XML
@@ -170,35 +170,37 @@ def get_quick_estimate()
   client = Savon.client(
     wsdl: "https://devwebservices.purolator.com/EWS/V2/Estimating/EstimatingService.wsdl",
     basic_auth: [Development_key, Password],
-    env_namespace: 'SOAP-ENV',
-    namespace: 'http://purolator.com/pws/datatypes/v1',
-    namespace_identifier: 'ns1',
+    env_namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
+    namespace: 'http://purolator.com/pws/datatypes/v2',
+    namespace_identifier: 'v2',
     pretty_print_xml: true,
     log: true,
     log_level: :debug,
     soap_header: {
-      "ns1:RequestContext" => {
-        "ns1:Version" => "1.0",
-        "ns1:Language" => "en",
-        "ns1:GroupID" => "xxx",
-        "ns1:RequestReference" => "Rating",
+      "v2:RequestContext" => {
+        "v2:Version" => "1.0",
+        "v2:Language" => "en",
+        "v2:GroupID" => "xxx",
+        "v2:RequestReference" => "Rating",
       },
     },
   )
 
+  puts client.inspect
+
   response = client.call(:get_quick_estimate, message: {
-                                                "BillingAccountNumber": BillingAccountNumber,
-                                                "SenderPostalCode": "T1H5H3",
-                                                "ReceiverAddress": {
-                                                  "City": "Lethbridge",
-                                                  "Province": "AB",
-                                                  "Country": "CA",
-                                                  "PostalCode": "T0L0V2",
+                                                "v2:BillingAccountNumber": BillingAccountNumber,
+                                                "v2:SenderPostalCode": "T1H5H3",
+                                                "v2:ReceiverAddress": {
+                                                  "v2:City": "Lethbridge",
+                                                  "v2:Province": "AB",
+                                                  "v2:Country": "CA",
+                                                  "v2:PostalCode": "T0L0V2",
                                                 },
-                                                "PackageType": "CustomerPackaging",
-                                                "TotalWeight": {
-                                                  "Value": 10,
-                                                  "WeightUnit": "lb",
+                                                "v2:PackageType": "CustomerPackaging",
+                                                "v2:TotalWeight": {
+                                                  "v2:Value": 10,
+                                                  "v2:WeightUnit": "lb",
                                                 },
                                               })
 end
