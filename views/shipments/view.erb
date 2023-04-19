@@ -22,6 +22,11 @@
 <p><strong>Paid By:</strong> <%= @shipment.paid_by %></p>
 <p><strong>Metadata:</strong> <%= @shipment.metadata %></p>
 <p><strong>Updated By:</strong> <%= @shipment.updated_by %></p>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editShipmentModal">
+  Edit Shipment
+</button>
+<%= erb :'shipments/_edit' %>
+
 <hr>
 
 <%# Parcels section %>
@@ -104,5 +109,33 @@
         // reload the page
         location.reload();
       });
+  }
+</script>
+
+<script>
+  // Get the modal element
+  const partialViewModal = document.getElementById('editShipmentModal');
+
+  // Get the button that opens the modal
+  const partialViewButton = document.getElementById('partial-view-button');
+
+  // Get the <span> element that closes the modal
+  const partialViewCloseButton = document.getElementsByClassName('partial-view-close')[0];
+
+  // When the user clicks on the button, open the modal
+  partialViewButton.onclick = function() {
+    partialViewModal.style.display = "block";
+  }
+
+  // When the user clicks on <span> (x), close the modal
+  partialViewCloseButton.onclick = function() {
+    partialViewModal.style.display = "none";
+  }
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == partialViewModal) {
+      partialViewModal.style.display = "none";
+    }
   }
 </script>

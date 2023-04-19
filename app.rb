@@ -89,62 +89,26 @@ end
 put "/shipments/:id" do
   shipment = Shipment[params[:id]]
 
-  shipment.update(params[:shipment])
+  # shipment.update(params[:shipment])
 
   shipment.order_id = params[:order_id]
   shipment.order_date = params[:order_date]
-  shipment.status = params[:status]
+  # shipment.status = params[:status]
   shipment.required_date = params[:required_date]
   shipment.tracking_number = params[:tracking_number]
   shipment.carrier_name = params[:carrier_name]
-  shipment.service_name = params[:service_name]
-  shipment.rate_response = params[:rate_response]
-  shipment.shipped_at = params[:shipped_at]
-  shipment.paid_by = params[:paid_by]
-  shipment.metadata = params[:metadata]
-  shipment.updated_by = params[:updated_by]
-
-  # shipment.shipping_from_address.address_type = 'shipping_from'
-  # shipment.shipping_from_address.address_line_1 = params[:shipping_from_address_line_1]
-  # shipment.shipping_from_address.address_line_2 = params[:shipping_from_address_line_2]
-  # shipment.shipping_from_address.name = params[:shipping_from_name]
-  # shipment.shipping_from_address.city = params[:shipping_from_city]
-  # shipment.shipping_from_address.state_code = params[:shipping_from_state_code]
-  # shipment.shipping_from_address.country = params[:shipping_from_country]
-  # shipment.shipping_from_address.postal_code = params[:shipping_from_postal_code]
-  # shipment.shipping_from_address.phone_number = params[:shipping_from_phone_number]
-  # shipment.shipping_from_address.email = params[:shipping_from_email]
-
-  # shipment.shipping_to_address.address_type = 'shipping_to'
-  # shipment.shipping_to_address.address_line_1 = params[:shipping_to_address_line_1]
-  # shipment.shipping_to_address.address_line_2 = params[:shipping_to_address_line_2]
-  # shipment.shipping_to_address.name = params[:shipping_to_name]
-  # shipment.shipping_to_address.city = params[:shipping_to_city]
-  # shipment.shipping_to_address.state_code = params[:shipping_to_state_code]
-  # shipment.shipping_to_address.country = params[:shipping_to_country]
-  # shipment.shipping_to_address.postal_code = params[:shipping_to_postal_code]
-  # shipment.shipping_to_address.phone_number = params[:shipping_to_phone_number]
-  # shipment.shipping_to_address.email = params[:shipping_to_email]
-
-  # shipment.billed_address.address_type = 'billed'
-  # shipment.billed_address.address_line_1 = params[:billed_address_line_1]
-  # shipment.billed_address.address_line_2 = params[:billed_address_line_2]
-  # shipment.billed_address.name = params[:billed_name]
-  # shipment.billed_address.city = params[:billed_city]
-  # shipment.billed_address.state_code = params[:billed_state_code]
-  # shipment.billed_address.country = params[:billed_country]
-  # shipment.billed_address.postal_code = params[:billed_postal_code]
-  # shipment.billed_address.phone_number = params[:billed_phone_number]
-  # shipment.billed_address.email = params[:billed_email]
+  # shipment.service_name = params[:service_name]
+  # shipment.rate_response = params[:rate_response]
+  # shipment.shipped_at = params[:shipped_at]
+  # shipment.paid_by = params[:paid_by]
+  # shipment.metadata = params[:metadata]
+  # shipment.updated_by = params[:updated_by]
 
   if shipment.valid?
     shipment.save
     redirect "/shipments"
   else
     @shipment = shipment
-    @shipping_from_address = shipment.shipping_from_address
-    @shipping_to_address = shipment.shipping_to_address
-    @billed_address = shipment.billed_address
     erb :"shipments/edit"
   end
 end
