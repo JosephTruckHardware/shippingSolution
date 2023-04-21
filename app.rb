@@ -15,6 +15,8 @@ require "erb"
 require "date"
 require "json"
 
+purolator = PurolatorAPI.new
+
 get "/" do
   @title = "Home"
   erb :index
@@ -75,6 +77,25 @@ get "/shipments/:id" do
   @parcels = Parcel.where(shipment_id: @shipment.id).all
   @unassigned_items = @shipment.get_unassigned_items
   erb :"shipments/view"
+end
+
+#Purchase a label for a shipment
+post "/shipments/:id/purchase_label" do
+  shipment = Shipment[params[:id]]
+  carrier = params[:carrier]
+  service = params[:service_type]
+
+  puts "carrier: " + carrier
+  puts "service: " + service
+
+  if carrier == "fedex"
+    puts "fedex"
+  end
+
+  if carrier == "Purolator"
+    purolator.create_shipment(shipment, service)
+    redirect '/shipments/' + shipment.id.to_s
+  end
 end
 
 # Edit a shipment
@@ -293,8 +314,10 @@ end
 
 # Get shipment postage rates
 get "/shipments/:id/get_rates" do
+  @shipment = Shipment[params[:id]]
+
   @fedex_rates = get_shipping_rates_international([params[:id]])
-  @purolator_rates = get_quick_estimate(Shipment[params[:id]])
+  @purolator_rates = purolator.get_quick_estimate(Shipment[params[:id]])
 
   puts @fedex_rates.inspect
   puts @purolator_rates.inspect
