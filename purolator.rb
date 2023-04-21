@@ -78,26 +78,74 @@ def create_shipment_domestic(shipment)
                                                     #   },
                                                     # },
                                                     "v2:PiecesInformation": {
-                                                      "v2:Piece": {
-                                                        "v2:Description": "Item Description",
-                                                        "v2:Quantity": 1,
-                                                        "v2:Weight": {
-                                                          "v2:Value": 1,
-                                                          "v2:WeightUnit": "kg",
+                                                      shipment.parcels.each do |parcel|
+                                                        "v2:Piece": {
+                                                          "v2:Description": parcel.get_items_detailed[0][:description],
+                                                          "v2:Quantity": parcel.get_items[:quantity],
+                                                          "v2:Weight": {
+                                                            "v2:Value": parcel.weight,
+                                                            "v2:WeightUnit": parcel.weight_unit,
+                                                          },
+                                                          "v2:Length": {
+                                                            "v2:Value": parcel.length,
+                                                            "v2:DimensionUnit": parcel.dimension_unit,
+                                                          },
+                                                          "v2:Width": {
+                                                            "v2:Value": parcel.width,
+                                                            "v2:DimensionUnit": parcel.dimension_unit,
+                                                          },
+                                                          "v2:Height": {
+                                                            "v2:Value": parcel.height,
+                                                            "v2:DimensionUnit": parcel.dimension_unit,
+                                                          },
                                                         },
-                                                        "v2:Length": {
-                                                          "v2:Value": 1,
-                                                          "v2:DimensionUnit": "cm",
-                                                        },
-                                                        "v2:Width": {
-                                                          "v2:Value": 1,
-                                                          "v2:DimensionUnit": "cm",
-                                                        },
-                                                        "v2:Height": {
-                                                          "v2:Value": 1,
-                                                          "v2:DimensionUnit": "cm",
-                                                        },
-                                                      },
+                                                      end
+
+
+
+                                                      # "v2:Piece": {
+                                                      #   "v2:Description": "Item Description",
+                                                      #   "v2:Quantity": 1,
+                                                      #   "v2:Weight": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:WeightUnit": "kg",
+                                                      #   },
+                                                      #   "v2:Length": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      #   "v2:Width": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      #   "v2:Height": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      # },
+
+
+
+                                                      # "v2:Piece": {
+                                                      #   "v2:Description": "Item Description",
+                                                      #   "v2:Quantity": 1,
+                                                      #   "v2:Weight": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:WeightUnit": "kg",
+                                                      #   },
+                                                      #   "v2:Length": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      #   "v2:Width": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      #   "v2:Height": {
+                                                      #     "v2:Value": 1,
+                                                      #     "v2:DimensionUnit": "cm",
+                                                      #   },
+                                                      # },
                                                     },
                                                   },
                                                   "v2:PaymentInformation": {
@@ -106,20 +154,20 @@ def create_shipment_domestic(shipment)
                                                   },
                                                   "v2:PickupInformation": {
                                                     "v2:PickupType": "DropOff",
-                                                    "v2:PickupAddress": {
-                                                      "v2:Name": "Sender Name",
-                                                      "v2:StreetNumber": "123",
-                                                      "v2:StreetName": "Main Street",
-                                                      "v2:City": "Toronto",
-                                                      "v2:Province": "ON",
-                                                      "v2:Country": "CA",
-                                                      "v2:PostalCode": "M1M1M1",
-                                                      "v2:PhoneNumber": {
-                                                        "v2:CountryCode": "1",
-                                                        "v2:AreaCode": "416",
-                                                        "v2:Phone": "1234567",
-                                                      },
-                                                    },
+                                                    # "v2:PickupAddress": {
+                                                    #   "v2:Name": "Sender Name",
+                                                    #   "v2:StreetNumber": "123",
+                                                    #   "v2:StreetName": "Main Street",
+                                                    #   "v2:City": "Toronto",
+                                                    #   "v2:Province": "ON",
+                                                    #   "v2:Country": "CA",
+                                                    #   "v2:PostalCode": "M1M1M1",
+                                                    #   "v2:PhoneNumber": {
+                                                    #     "v2:CountryCode": "1",
+                                                    #     "v2:AreaCode": "416",
+                                                    #     "v2:Phone": "1234567",
+                                                    #   },
+                                                    # },
                                                   },
                                                 },
                                                 "v2:PrinterType": "Thermal",

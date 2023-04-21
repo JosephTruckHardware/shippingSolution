@@ -325,8 +325,8 @@ post "/api/shipments" do
 
   shipment = Shipment.new(shipment_data)
   shipment.set(created_at: DateTime.now, updated_at: DateTime.now, status: "Pending")
-  shipment.shipping_from_address_id = shipping_to_address.id
-  shipment.shipping_to_address_id = shipping_from_address.id
+  shipment.shipping_from_address_id = shipping_from_address.id
+  shipment.shipping_to_address_id = shipping_to_address.id
   shipment.billed_address_id = billing_address.id
   shipment.metadata = metadata
   shipment.save
