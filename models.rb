@@ -201,6 +201,39 @@ end
 
 class Address < Sequel::Model
   one_to_one :shipment
+
+  def get_street_number
+    street_number = self.address_line_1.split(' ')[0]
+    street_number
+  end
+
+  def get_street_name
+    street_name = self.address_line_1.split(' ')[1..-1].join(' ')
+    street_name
+  end
+
+  def postal_code_stripped
+    postal_code_stripped = self.postal_code.delete(' ')
+  end
+
+  def get_stripped_phone_number
+    phone_number = self.phone_number.delete(' ')
+    phone_number = phone_number.delete('-')
+    phone_number = phone_number.delete('(')
+    phone_number = phone_number.delete(')')
+    phone_number = phone_number.delete('+')
+    phone_number
+  end
+
+  def get_area_code
+    phone_number = get_stripped_phone_number
+    phone_number[0..2]
+  end
+
+  def get_rest_of_phone_number
+    phone_number = get_stripped_phone_number
+    phone_number[3..9]
+  end
 end
 
 class Token < Sequel::Model
