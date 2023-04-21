@@ -1,34 +1,35 @@
-<div class=item">
-  <p><%=item.inspect%>
-  <p>shipment id <%=item[:shipment_id]%></p>
-  <p>Weight: <%=item[:weight] %> <%=item[:weight_unit]%></p>
-  <p>Description: <%=item[:description] %></p>
-  <p>Quantity: <%=item[:quantity] %></p>
-  <p>SKU: <%=item[:sku] %></p>
+<div class="row">
+  <div class="col-6 align-items-start">
+    <p><%=item[:description] %> - <%=item[:sku] %></p>
+  </div>
+  <div class="col-2">
+    <p><%=item[:quantity] %> x <%=item[:weight] %> <%=item[:weight_unit]%></p>
+  </div>
+  <div class="col-4 text-end">
+
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-item-modal-<%= item[:item_id]%>" data-item-id="<%= item[:item_id] %>">Edit</button>
   <%= erb :'items/_edit', locals: { item: item } %>
-
-
-  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeItemModal-<%= item[:id]%>">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeItemModal-<%= item[:id]%>">
     Remove Item
   </button>
 
-  <div class="modal fade" id="removeItemModal-<%= item[:id]%>" tabindex="-1" aria-labelledby="removeItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="removeItemModalLabel">Remove Item</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to remove this item?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <form action="/shipments/<%=item[:shipment_id]%>/parcels/<%= parcel.id %>/items/<%=item[:id]%>" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <button type="submit" class="btn btn-danger">Remove Item</button>
-          </form>
+    <div class="modal fade" id="removeItemModal-<%= item[:id]%>" tabindex="-1" aria-labelledby="removeItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="removeItemModalLabel">Remove Item</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to remove this item?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/shipments/<%=item[:shipment_id]%>/parcels/<%= parcel.id %>/items/<%=item[:id]%>" method="POST">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit" class="btn btn-danger">Remove Item</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
