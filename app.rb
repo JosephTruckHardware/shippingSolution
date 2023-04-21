@@ -1,5 +1,6 @@
 # require relatives
 require_relative "Fedex"
+require_relative "purolator"
 require_relative "models"
 require_relative "shipment_pdf_generator"
 
@@ -292,8 +293,11 @@ end
 
 # Get shipment postage rates
 get "/shipments/:id/get_rates" do
-  @rates = get_shipping_rates_international([params[:id]])
-  puts @rates.inspect
+  @fedex_rates = get_shipping_rates_international([params[:id]])
+  @purolator_rates = get_quick_estimate_international(Shipment[params[:id]])
+
+  puts @fedex_rates.inspect
+  puts @purolator_rates.inspect
   erb :"partials/_rates", layout: false
 end
 
