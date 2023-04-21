@@ -294,7 +294,7 @@ end
 # Get shipment postage rates
 get "/shipments/:id/get_rates" do
   @fedex_rates = get_shipping_rates_international([params[:id]])
-  @purolator_rates = get_quick_estimate_international(Shipment[params[:id]])
+  @purolator_rates = get_quick_estimate(Shipment[params[:id]])
 
   puts @fedex_rates.inspect
   puts @purolator_rates.inspect
