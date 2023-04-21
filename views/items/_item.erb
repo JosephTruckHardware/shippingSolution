@@ -6,12 +6,15 @@
     <p><%=item[:quantity] %> x <%=item[:weight] %> <%=item[:weight_unit]%></p>
   </div>
   <div class="col-4 text-end">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal-<%= item[:id]%>">
+    Edit
+    </button>
 
-  <button type="button" c  ass="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-item-modal-<%= item[:item_id]%>" data-item-id="<%= item[:item_id] %>">Edit</button>
-  <%= erb :'items/_edit', locals: { item: item } %>
+    <%= erb :'items/_edit', locals: { item: item } %>
+
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeItemModal-<%= item[:id]%>">
-    Remove Item
-  </button>
+    Remove
+    </button>
 
     <div class="modal fade" id="removeItemModal-<%= item[:id]%>" tabindex="-1" aria-labelledby="removeItemModalLabel" aria-hidden="true">
       <div class="modal-dialog">
