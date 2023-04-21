@@ -170,7 +170,7 @@ def get_quick_estimate()
   client = Savon.client(
     wsdl: "https://devwebservices.purolator.com/EWS/V2/Estimating/EstimatingService.wsdl",
     basic_auth: [Development_key, Password],
-    env_namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
+    # env_namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
     namespace: 'http://purolator.com/pws/datatypes/v2',
     namespace_identifier: 'v2',
     pretty_print_xml: true,
