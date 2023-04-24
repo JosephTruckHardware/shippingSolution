@@ -19,6 +19,34 @@ class FedexAPI
 
   end
 
+  def get_rates(shipment)
+    if rates_current?(shipment)
+      puts "rates are current"
+      if shipment.rate_response["rates"][0]["Fedex"].nil?
+        shipment.rate_response["rates"][0]["Fedex"]
+      else 
+        puts "No rates found"
+        get_shipping_rates(shipment)
+      end
+    else
+      get_shipping_rates_international(shipment)
+    end
+  end
+
+  def rates_current?(shipment)
+    if shipment.rate_response.nil?
+      false
+    else
+      previous_rates = JSON.parse(shipment.rate_response)
+
+      if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
+        true  
+      else
+        false
+      end
+    end
+  end
+
   def get_token
     token = DB[:tokens].where { token_expires_at > Sequel::CURRENT_TIMESTAMP }.first
     if !token.nil? && token[:token_number] != ""
@@ -195,8 +223,7 @@ class FedexAPI
     end
   end
 
-  def get_shipping_rates_international(shipment_id)
-    shipment = Shipment[shipment_id]
+  def get_shipping_rates_international(shipment)
     shipping_to = Address[shipment.shipping_to_address_id]
     shipping_from = Address[shipment.shipping_from_address_id]
     billed_address = Address[shipment.billed_address_id]
@@ -289,13 +316,13 @@ class FedexAPI
 
     if rates.status == 200
       puts "Success: "
-      shipment.rate_response["rates"]["Fedex"] = []
+      shipment.rate_response["rates"][0]["Fedex"] = []
       shipment.rate_response["date"] = DateTime.now.to_json
-      shipment.rate_response["rates"]["Fedex"] << JSON.parse(rates.body)
+      shipment.rate_response["rates"][0]["Fedex"] << JSON.parse(rates.body["output"]["rateReplyDetails"])
       shipment.save
-      rates = JSON.parse(rates.body)
-      rates["output"]["rateReplyDetails"]
-
+      # rates = JSON.parse(rates.body)
+      # rates["output"]["rateReplyDetails"]
+      shipment.rate_response["rates"][0]["Fedex"]
     else
       puts "Failed: " + rates.body
       "Error"
