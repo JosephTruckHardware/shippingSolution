@@ -317,7 +317,7 @@ get "/shipments/:id/get_rates" do
   @shipment = Shipment[params[:id]]
 
   @fedex_rates = get_shipping_rates_international([params[:id]])
-  @purolator_rates = purolator.get_quick_estimate(Shipment[params[:id]])
+  @purolator_rates = purolator.get_rates(Shipment[params[:id]])
 
   puts @fedex_rates.inspect
   puts @purolator_rates.inspect
@@ -356,6 +356,13 @@ post "/api/shipments" do
   shipment.shipping_to_address_id = shipping_to_address.id
   shipment.billed_address_id = billing_address.id
   shipment.metadata = metadata
+  shipment.rate_response = {
+    "date" => DateTime.now,
+    "rates" => [
+      "Fedex" => [],
+      "Purolator" => [],
+    ]
+  }.to_json
   shipment.save
 
   items_data.each do |item_data|

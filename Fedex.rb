@@ -283,7 +283,9 @@ def get_shipping_rates_international(shipment_id)
 
   if rates.status == 200
     puts "Success: "
-    shipment.rate_response = rates.body
+    shipment.rate_response["rates"]["Fedex"] = []
+    shipment.rate_response["date"] = DateTime.now.to_json
+    shipment.rate_response["rates"]["Fedex"] << JSON.parse(rates.body)
     shipment.save
     rates = JSON.parse(rates.body)
     rates["output"]["rateReplyDetails"]

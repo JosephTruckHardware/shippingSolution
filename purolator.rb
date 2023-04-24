@@ -40,6 +40,42 @@ class PurolatorAPI
     response.hash
   end
 
+  def rates_current?(shipment)
+    if shipment.rate_response.nil?
+      false
+    else
+      previous_rates = JSON.parse(shipment.rate_response)
+      if DateTime.parse(previous_rates["date"]) >= Date.today - 1
+        true
+      else
+        false
+      end
+    end
+  end
+
+  def get_rates(shipment)
+    if rates_current?
+      previous_rates = JSON.parse(shipment.rate_response)
+      previous_rates["rates"]["Purolator"]
+    else
+      get_quick_estimate(shipment)
+    end
+  end
+
+  def get_rates(shipment)
+    if shipment.rate_response.nil?
+      get_quick_estimate(shipment)
+    else
+      previous_rates = JSON.parse(shipment.rate_response)
+      if DateTime.parse(previous_rates["date"]) >= Date.today - 1
+        previous_rates["rates"]["Purolator"]
+      else
+        get_quick_estimate(shipment)
+      end
+    end
+  end
+
+
   def get_quick_estimate(shipment)
     client = Savon.client(
       wsdl: "https://devwebservices.purolator.com/EWS/V2/Estimating/EstimatingService.wsdl",
@@ -76,7 +112,20 @@ class PurolatorAPI
                                                   },
                                                 })
 
-    response.body[:get_quick_estimate_response][:shipment_estimates][:shipment_estimate]
+    shipment.rate_response = {
+      "date" => Date.today,
+      "response" => [
+        "Purolator" => response.body[:get_quick_estimate_response][:shipment_estimates][:shipment_estimate],
+      ]
+    }.to_json
+
+    shipment.save
+
+    shipment.rate_response["response"]["Purolator"]
+
+    # shipment.rate_response["date"] = Date.today
+
+    # shipment.rate_response["response"] = response.body[:get_quick_estimate_response][:shipment_estimates][:shipment_estimate]
 
   end
 
