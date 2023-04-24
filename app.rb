@@ -317,10 +317,10 @@ end
 get "/shipments/:id/get_rates" do
   @shipment = Shipment[params[:id]]
 
-  @fedex_rates = fedex.get_rates(Shipment[params[:id]])
+  # @fedex_rates = fedex.get_rates(Shipment[params[:id]])
   @purolator_rates = purolator.get_rates(Shipment[params[:id]])
 
-  puts @fedex_rates.inspect
+  # puts @fedex_rates.inspect
   puts @purolator_rates.inspect
   erb :"partials/_rates", layout: false
 end
@@ -358,11 +358,16 @@ post "/api/shipments" do
   shipment.billed_address_id = billing_address.id
   shipment.metadata = metadata
   shipment.rate_response = {
-    "date" => DateTime.now,
-    "rates" => [
-      "Fedex" => [],
-      "Purolator" => [],
-    ]
+    fedex: {
+      rates: [],
+      errors: {},
+      date: nil
+    },
+    purolator: {
+      rates: [],
+      errors: {},
+      date: nil
+    },
   }.to_json
   shipment.save
 

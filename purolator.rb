@@ -13,23 +13,46 @@ class PurolatorAPI
   end
 
   def rates_current?(shipment)
-    if shipment.rate_response.nil?
+    rates = JSON.parse(shipment.rate_response)
+    rates = rates["purolator"]
+    if rates['date'].nil?
+      puts 'rates do not exist'
       false
-    else
-      previous_rates = JSON.parse(shipment.rate_response)
-
-      if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
+    elsif
+      if DateTime.parse(rates["date"]) >= (Date.today - 1)
+        puts 'rates are current'
         true
       else
+        puts 'rates are not current'
         false
       end
+    else
+      puts 'rates are not current'
+      false
     end
   end
+
+    
+  #   elsif shipment.rate_response["Purolator"]["date"] != ""
+  #     previous_rates = JSON.parse(shipment.rate_response["Purolator"])
+  #     if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
+  #       true
+  #     else
+  #       false
+  #     end
+  #   else
+  #     false
+  #   end
+  # end
 
   def get_rates(shipment)
     if rates_current?(shipment)
       previous_rates = JSON.parse(shipment.rate_response)
-      previous_rates["rates"][0]["Purolator"]
+      previous_rates["purolator"]["rates"]
+
+
+      # previous_rates = JSON.parse(shipment.rate_response)
+      # previous_rates["rates"][0]["Purolator"]
     else
       get_quick_estimate(shipment)
     end
@@ -112,16 +135,24 @@ class PurolatorAPI
                                                   },
                                                 })
 
-    shipment.rate_response = {
-      "date" => Date.today,
-      "response" => [
-        "Purolator" => response.body[:get_quick_estimate_response][:shipment_estimates][:shipment_estimate],
+    new_rates = response.body[:get_quick_estimate_response][:shipment_estimates][:shipment_estimate]                                            
+
+    new_rate_response = {
+      "date" => DateTime.now,
+      "rates" => [
+        new_rates.each do |rate|
+          {
+            "service_name" => rate[:service_id],
+            "service_code" => rate[:service_id],
+            "total_price" => rate[:total_price],
+            "currency" => rate[:currency],
+            "est_delivery_date" => rate[:expected_delivery_date],
+          }
+        end
       ]
     }.to_json
 
     shipment.save
-
-    shipment.rate_response["response"]["Purolator"]
 
     # shipment.rate_response["date"] = Date.today
 
