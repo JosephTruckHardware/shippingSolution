@@ -12,6 +12,42 @@ class PurolatorAPI
 
   end
 
+  def rates_current?(shipment)
+    if shipment.rate_response.nil?
+      false
+    else
+      previous_rates = JSON.parse(shipment.rate_response)
+
+      if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
+        true
+      else
+        false
+      end
+    end
+  end
+
+  def get_rates(shipment)
+    if rates_current?(shipment)
+      previous_rates = JSON.parse(shipment.rate_response)
+      previous_rates["rates"][0]["Purolator"]
+    else
+      get_quick_estimate(shipment)
+    end
+  end
+
+  # def get_rates(shipment)
+  #   if shipment.rate_response.nil?
+  #     get_quick_estimate(shipment)
+  #   else
+  #     previous_rates = JSON.parse(shipment.rate_response)
+  #     if DateTime.parse(previous_rates["date"]) >= Date.today - 1
+  #       previous_rates["rates"]["Purolator"]
+  #     else
+  #       get_quick_estimate(shipment)
+  #     end
+  #   end
+  # end
+
   def create_shipment(shipment, service)
     client = Savon.client(
       wsdl: "https://devwebservices.purolator.com/EWS/V2/Shipping/ShippingService.wsdl",
@@ -39,42 +75,6 @@ class PurolatorAPI
 
     response.hash
   end
-
-  def rates_current?(shipment)
-    if shipment.rate_response.nil?
-      false
-    else
-      previous_rates = JSON.parse(shipment.rate_response)
-      if DateTime.parse(previous_rates["date"]) >= Date.today - 1
-        true
-      else
-        false
-      end
-    end
-  end
-
-  def get_rates(shipment)
-    if rates_current?
-      previous_rates = JSON.parse(shipment.rate_response)
-      previous_rates["rates"]["Purolator"]
-    else
-      get_quick_estimate(shipment)
-    end
-  end
-
-  def get_rates(shipment)
-    if shipment.rate_response.nil?
-      get_quick_estimate(shipment)
-    else
-      previous_rates = JSON.parse(shipment.rate_response)
-      if DateTime.parse(previous_rates["date"]) >= Date.today - 1
-        previous_rates["rates"]["Purolator"]
-      else
-        get_quick_estimate(shipment)
-      end
-    end
-  end
-
 
   def get_quick_estimate(shipment)
     client = Savon.client(

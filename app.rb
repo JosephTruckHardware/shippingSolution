@@ -317,7 +317,7 @@ end
 get "/shipments/:id/get_rates" do
   @shipment = Shipment[params[:id]]
 
-  @fedex_rates = fedex.get_shipping_rates_international([params[:id]])
+  @fedex_rates = fedex.get_rates(Shipment[params[:id]])
   @purolator_rates = purolator.get_rates(Shipment[params[:id]])
 
   puts @fedex_rates.inspect
