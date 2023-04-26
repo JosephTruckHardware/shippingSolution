@@ -21,29 +21,43 @@ class FedexAPI
 
   def get_rates(shipment)
     if rates_current?(shipment)
-      puts "rates are current"
-      if shipment.rate_response["rates"][0]["Fedex"].nil?
-        shipment.rate_response["rates"][0]["Fedex"]
-      else 
-        puts "No rates found"
-        get_shipping_rates(shipment)
-      end
+      previous_rates = JSON.parse(shipment.rate_response)
+      previous_rates["fedex"]["rates"]
     else
       get_shipping_rates_international(shipment)
     end
   end
 
-  def rates_current?(shipment)
-    if shipment.rate_response.nil?
-      false
-    else
-      previous_rates = JSON.parse(shipment.rate_response)
+  # def get_rates(shipment)
+  #   if rates_current?(shipment)
+  #     puts "rates are current"
+  #     if shipment.rate_response["rates"][0]["Fedex"].nil?
+  #       shipment.rate_response["rates"][0]["Fedex"]
+  #     else 
+  #       puts "No rates found"
+  #       get_shipping_rates(shipment)
+  #     end
+  #   else
+  #     get_shipping_rates_international(shipment)
+  #   end
+  # end
 
-      if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
-        true  
+  def rates_current?(shipment)
+    rates = JSON.parse(shipment.rate_response)
+    if rates['date'].nil?
+      puts 'rates do not exist'
+      false
+    elsif
+      if DateTime.parse(rates["date"]) >= (Date.today - 1)
+        puts 'rates are current'
+        true
       else
+        puts 'rates are not current'
         false
       end
+    else
+      puts 'rates are not current'
+      false
     end
   end
 
@@ -316,13 +330,44 @@ class FedexAPI
 
     if rates.status == 200
       puts "Success: "
-      shipment.rate_response["rates"][0]["Fedex"] = []
-      shipment.rate_response["date"] = DateTime.now.to_json
-      shipment.rate_response["rates"][0]["Fedex"] << JSON.parse(rates.body["output"]["rateReplyDetails"])
+
+      new_rates = rates.body["output"]["rateReplyDetails"]
+
+      puts new_rates
+
+      new_rate_response = {
+        "date" => DateTime.now,
+        "rates" => [
+          new_rates.each do |rate|
+            {
+              "service_name" => rate[:serviceName],
+              "service_code" => rate[:serviceType],
+              "total_price" => rate[:ratedShipmentDetails][0][:totalNetCharge],
+              "currency" => rate[:ratedShipmentDetails][0][:currency],
+              # "est_delivery_date" => rate[:ratedShipmentDetails][0][:currency],
+            }
+          end
+        ]
+      }.to_json
+
+      shipment.rate_response["fedex"] = {
+        "date" => nil,
+        "rates" => nil,
+        "errors" => nil,
+      }
+
+      shipment.rate_response['fedex'] = new_rate_response
+
       shipment.save
+
+      # shipment.rate_response["rates"][0]["Fedex"] = []
+      # shipment.rate_response["date"] = DateTime.now.to_json
+      # shipment.rate_response["rates"][0]["Fedex"] << JSON.parse(rates.body["output"]["rateReplyDetails"])
+      # shipment.save
       # rates = JSON.parse(rates.body)
       # rates["output"]["rateReplyDetails"]
-      shipment.rate_response["rates"][0]["Fedex"]
+      # shipment.rate_response["rates"][0]["Fedex"]
+
     else
       puts "Failed: " + rates.body
       "Error"

@@ -14,7 +14,6 @@ class PurolatorAPI
 
   def rates_current?(shipment)
     rates = JSON.parse(shipment.rate_response)
-    rates = rates["purolator"]
     if rates['date'].nil?
       puts 'rates do not exist'
       false
@@ -32,27 +31,10 @@ class PurolatorAPI
     end
   end
 
-    
-  #   elsif shipment.rate_response["Purolator"]["date"] != ""
-  #     previous_rates = JSON.parse(shipment.rate_response["Purolator"])
-  #     if DateTime.parse(previous_rates["date"]) >= (Date.today - 1)
-  #       true
-  #     else
-  #       false
-  #     end
-  #   else
-  #     false
-  #   end
-  # end
-
   def get_rates(shipment)
     if rates_current?(shipment)
       previous_rates = JSON.parse(shipment.rate_response)
       previous_rates["purolator"]["rates"]
-
-
-      # previous_rates = JSON.parse(shipment.rate_response)
-      # previous_rates["rates"][0]["Purolator"]
     else
       get_quick_estimate(shipment)
     end
@@ -151,6 +133,14 @@ class PurolatorAPI
         end
       ]
     }.to_json
+
+    shipment.rate_response["purolator"] = {
+      "date" => nil,
+      "rates" => nil,
+      "errors" => nil,
+    }
+
+    shipment.rate_response["purolator"] = new_rate_response
 
     shipment.save
 

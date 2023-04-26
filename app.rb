@@ -143,6 +143,42 @@ delete "/shipments/:id" do
   redirect "/shipments"
 end
 
+# Edit items in a shipment
+get "/shipments/:id/items" do
+  @shipment = Shipment[params[:id]]
+  @items = Item.where(shipment_id: @shipment.id).all
+  # @parcel_items = ParcelItem.where(shipment_id: @shipment.id).all
+  erb :"items/index"
+end
+
+# Save edited item in a shipment
+put "/shipments/:shipment_id/items/:id" do
+  @item = Item[params[:id]]
+  @item.update(
+    weight: params[:weight],
+    weight_unit: params[:weight_unit],
+    quantity: params[:quantity],
+    description: params[:description],
+    sku: params[:sku],
+    hs_code: params[:hs_code],
+    value_amount: params[:value_amount],
+    value_currency: params[:value_currency],
+    origin_country: params[:origin_country],
+    order_id: params[:order_id],
+    single_item_per_parcel: params[:single_item_per_parcel] == "on",
+  )
+  @item.save
+  shipment = Shipment[@item.shipment_id]
+  redirect to("/shipments/" + shipment.id.to_s + "/items")
+end
+
+delete "/shipments/:shipment_id/items/:id" do
+  item = Item[params[:id]]
+  ParcelsItem.where(item_id: item.id).destroy
+  item.destroy
+  redirect back
+end
+
 # Add a package to a shipment
 get "/shipments/:id/new_parcel" do
   @shipment = Shipment[params[:id]]
@@ -214,25 +250,6 @@ get "/shipments/:shipment_id/parcels/:parcel_id/items/:id/edit" do
   @item = Item[params[:id]]
   @parcel = Parcel[params[:parcel_id]]
   erb :"items/_edit", layout: false
-end
-
-put "/items/:id" do
-  @item = Item[params[:id]]
-  @item.update(
-    weight: params[:weight],
-    weight_unit: params[:weight_unit],
-    description: params[:description],
-    sku: params[:sku],
-    hs_code: params[:hs_code],
-    value_amount: params[:value_amount],
-    value_currency: params[:value_currency],
-    origin_country: params[:origin_country],
-    order_id: params[:order_id],
-    single_item_per_parcel: params[:single_item_per_parcel] == "on",
-  )
-  @item.save
-  shipment = Shipment[@item.shipment_id]
-  redirect to("/shipments/" + shipment.id.to_s)
 end
 
 # Saved edited item in a package
@@ -317,10 +334,10 @@ end
 get "/shipments/:id/get_rates" do
   @shipment = Shipment[params[:id]]
 
-  # @fedex_rates = fedex.get_rates(Shipment[params[:id]])
+  @fedex_rates = fedex.get_rates(Shipment[params[:id]])
   @purolator_rates = purolator.get_rates(Shipment[params[:id]])
 
-  # puts @fedex_rates.inspect
+  puts @fedex_rates.inspect
   puts @purolator_rates.inspect
   erb :"partials/_rates", layout: false
 end

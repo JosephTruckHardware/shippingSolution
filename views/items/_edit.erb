@@ -6,7 +6,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="/items/<%= item[:id] %>" method="post">
+        <form action="/shipments/<%= item[:shipment_id] %>/items/<%= item[:id] %>" method="post">
           <input type="hidden" name="_method" value="put">
           <div class="mb-3">
             <label for="weight" class="form-label">Weight</label>
@@ -15,6 +15,10 @@
           <div class="mb-3">
             <label for="weight_unit" class="form-label">Weight Unit</label>
             <input type="text" class="form-control" id="weight_unit" name="weight_unit" value="<%= item[:weight_unit] %>">
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" step="1" class="form-control" id="quantity" name="quantity" value="<%= item[:quantity] %>">
           </div>
           <div class="mb-3">
             <label for="description" class="form-label">Description</label>

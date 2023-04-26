@@ -2,14 +2,16 @@
   <% if @fedex_rates != [] %>
     <% @fedex_rates.each do |rate| %>
       <li>
-        <strong><%= rate["serviceName"] %></strong>:
+        <strong><%= rate[:service_name] %></strong>:
         <ul>
-          <li>Base Price: $<%= rate["ratedShipmentDetails"][0]["totalBaseCharge"] %></li>
-          <li>Surcharge: $<%= rate["ratedShipmentDetails"][0]["shipmentRateDetail"]["totalSurcharges"] %></li>
-          <li>Total Price: $<%= rate["ratedShipmentDetails"][0]["totalNetCharge"] %></li>
+          <li>Total Price: $<%= rate[:total_price] %> <%= rate[:currency] %></li>
         </ul>
-        <button btn btn-primary>This is a test</button>
       </li>
+       <form action="/shipments/<%= @shipment.id %>/purchase_label" method="post">
+        <input type="hidden" name="carrier" value="Purolator">
+        <input type="hidden" name="service_type" value="<%= rate[:service_id] %>">
+        <button btn btn-primary>This is a test</button>
+      </form>
       <br>
     <% end %>
   <% end %>
